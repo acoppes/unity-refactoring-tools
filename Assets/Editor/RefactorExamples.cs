@@ -38,13 +38,15 @@ public static class RefactorExamples
                 return false;
             
             var parentGameObject = gameObject.transform.parent.gameObject;
+            
+            var parentComponentA = parentGameObject.GetComponent<ComponentA>();
 
-            if (parentGameObject.GetComponent<ComponentA>() != null)
-                return false;
+            if (parentComponentA == null)
+            {
+                parentComponentA = parentGameObject.AddComponent<ComponentA>();
+            }
              
             var componentA = gameObject.GetComponent<ComponentA>();
-            var parentComponentA = parentGameObject.AddComponent<ComponentA>();
-
             var json = JsonUtility.ToJson(componentA);
             JsonUtility.FromJsonOverwrite(json, parentComponentA);
             
