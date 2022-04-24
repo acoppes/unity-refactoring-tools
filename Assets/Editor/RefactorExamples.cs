@@ -93,4 +93,48 @@ public static class RefactorExamples
             return true;
         });
     }
+    
+    [MenuItem("Refactors/Refactor ComponentB to Child With Reference")]
+    public static void Refactor5()
+    {
+        RefactorTools.RefactorMonoBehaviour<ComponentB>(true, delegate(GameObject gameObject)
+        {
+            // will ignore this case
+            if ("Child_WithComponentB".Equals(gameObject.name))
+                return false;
+            
+            GameObject childObject;
+
+            if (gameObject.transform.childCount == 0)
+            {
+                childObject = new GameObject("Child_WithComponentB");
+                childObject.transform.SetParent(gameObject.transform);
+            }
+            else
+            {
+                childObject = gameObject.transform.GetChild(0).gameObject;
+            }
+
+            var childComponentB = childObject.GetComponent<ComponentB>();
+
+            if (childComponentB == null)
+            {
+                childComponentB = childObject.AddComponent<ComponentB>();
+            }
+             
+            var componentB = gameObject.GetComponent<ComponentB>();
+            var json = JsonUtility.ToJson(componentB);
+            JsonUtility.FromJsonOverwrite(json, childComponentB);
+
+            var componentC = gameObject.GetComponent<ComponentC>();
+            if (componentC.referenceToB == componentB)
+            {
+                componentC.referenceToB = childComponentB;
+            }
+            
+            Object.DestroyImmediate(componentB);
+            
+            return true;
+        });
+    }
 }
