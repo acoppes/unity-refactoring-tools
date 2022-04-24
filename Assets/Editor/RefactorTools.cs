@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Utils.Editor
@@ -109,8 +110,17 @@ namespace Utils.Editor
 
             if (!includeScenes)
                 return;
+
+            var loadedScenesList = new List<string>();
+            var loadedScenes = UnityEditor.SceneManagement.EditorSceneManager.sceneCount;
+            var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().path;
+            for (var i = 0; i < loadedScenes; i++)
+            {
+                var scene = UnityEditor.SceneManagement.EditorSceneManager.GetSceneAt(i);
+                loadedScenesList.Add(scene.path);
+            }
             
-             var allScenesGuids = new List<string>();
+            var allScenesGuids = new List<string>();
 
             // Here we filter by all assets of type scene but under Assets folder to avoid all other scenes from 
             // external packages.
@@ -170,6 +180,15 @@ namespace Utils.Editor
                     UnityEditor.EditorUtility.ClearProgressBar();
                 }
             }
+
+            var newActiveScene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(activeScene, OpenSceneMode.Single);
+            for (var i = 0; i < loadedScenes; i++)
+            {
+                if (loadedScenesList[i].Equals(activeScene))
+                    continue;
+                UnityEditor.SceneManagement.EditorSceneManager.OpenScene(loadedScenesList[i], OpenSceneMode.Additive);
+            }
+            UnityEditor.SceneManagement.EditorSceneManager.SetActiveScene(newActiveScene);
         }
     }
 }
