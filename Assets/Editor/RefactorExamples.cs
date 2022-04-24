@@ -61,6 +61,10 @@ public static class RefactorExamples
     {
         RefactorTools.RefactorMonoBehaviour<ComponentB>(true, delegate(GameObject gameObject)
         {
+            // will ignore this case
+            if ("Child_WithComponentB".Equals(gameObject.name))
+                return false;
+            
             GameObject childObject;
 
             if (gameObject.transform.childCount == 0)
