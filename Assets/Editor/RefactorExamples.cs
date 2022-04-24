@@ -1,11 +1,12 @@
 using RefactorExamplesData;
+using UnityEditor;
 using UnityEngine;
 using Utils.Editor;
 
 public static class RefactorExamples
 {
-    [UnityEditor.MenuItem("Refactors/Refactor Custom Data")]
-    public static void RefactorCustomData()
+    [MenuItem("Refactors/Refactor Custom Data")]
+    public static void Refactor1()
     {
         RefactorTools.RefactorAsset(delegate(CustomDataAsset asset)
         {
@@ -14,8 +15,8 @@ public static class RefactorExamples
         });
     }
     
-    [UnityEditor.MenuItem("Refactors/Refactor Custom MonoBehaviour")]
-    public static void RefactorCustomMonoBehaviour()
+    [MenuItem("Refactors/Refactor Custom MonoBehaviour")]
+    public static void Refactor2()
     {
         RefactorTools.RefactorMonoBehaviour<CustomBehaviour>(true, delegate(GameObject gameObject)
         {
@@ -24,6 +25,31 @@ public static class RefactorExamples
             {
                 behaviour.newValue = $"VALUE:{behaviour.previousValue}";
             }
+            return true;
+        });
+    }
+    
+    [MenuItem("Refactors/Refactor ComponentA to Parent")]
+    public static void Refactor3()
+    {
+        RefactorTools.RefactorMonoBehaviour<ComponentA>(true, delegate(GameObject gameObject)
+        {
+            if (gameObject.transform.parent == null)
+                return false;
+            
+            var parentGameObject = gameObject.transform.parent.gameObject;
+
+            if (parentGameObject.GetComponent<ComponentA>() != null)
+                return false;
+             
+            var componentA = gameObject.GetComponent<ComponentA>();
+            var parentComponentA = parentGameObject.AddComponent<ComponentA>();
+
+            var json = JsonUtility.ToJson(componentA);
+            JsonUtility.FromJsonOverwrite(json, parentComponentA);
+            
+            Object.DestroyImmediate(componentA);
+            
             return true;
         });
     }
