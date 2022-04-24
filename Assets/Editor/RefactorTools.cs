@@ -27,13 +27,12 @@ namespace Utils.Editor
                         i / (float)total);
 
                     var result = callback(asset);
-                    // Just to break the loop if something is wrong...
-                    if (!result)
+                    
+                    if (result)
                     {
+                        UnityEditor.EditorUtility.SetDirty(asset);
                         break;
                     }
-                
-                    UnityEditor.EditorUtility.SetDirty(asset);
                 }
             
                 UnityEditor.AssetDatabase.SaveAssets();
@@ -44,11 +43,13 @@ namespace Utils.Editor
             }
         }
         
-        public static void RefactorMonoBehaviour<T>(bool includeScenes, Func<GameObject, bool> callback) where T : UnityEngine.Component
+        public static void RefactorMonoBehaviour<T>(bool includeScenes, 
+            Func<GameObject, bool> callback) where T : UnityEngine.Component
         {
             var guids = UnityEditor.AssetDatabase.FindAssets($"t:prefab", null);
-            var prefabs = guids.Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
-                UnityEditor.AssetDatabase.GUIDToAssetPath(g))).ToList();
+            var prefabs = guids
+                .Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                    UnityEditor.AssetDatabase.GUIDToAssetPath(g))).ToList();
             
             // Ignore prefabs without component T
             prefabs = prefabs.Where(p => p.GetComponentInChildren<T>(true) != null).ToList();
@@ -91,14 +92,11 @@ namespace Utils.Editor
 
                     var result = callback(contents);
 
-                    // Just to break the loop if something is wrong...
-                    if (!result)
+                    if (result)
                     {
-                        UnityEditor.PrefabUtility.UnloadPrefabContents(contents);
-                        break;
+                        UnityEditor.PrefabUtility.SaveAsPrefabAsset(contents, UnityEditor.AssetDatabase.GetAssetPath(prefab));
                     }
                     
-                    UnityEditor.PrefabUtility.SaveAsPrefabAsset(contents, UnityEditor.AssetDatabase.GetAssetPath(prefab));
                     UnityEditor.PrefabUtility.UnloadPrefabContents(contents);
                 }
             }
