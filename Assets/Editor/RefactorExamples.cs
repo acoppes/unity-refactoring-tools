@@ -4,16 +4,12 @@ using System.Linq;
 
 public static class RefactorExamples
 {
-    public static List<T> FindAssets<T>(string[] folders = null) where T : UnityEngine.Object
-    {
-        var guids = UnityEditor.AssetDatabase.FindAssets($"t:{typeof(T)}", folders);
-        return guids.Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<T>(
-            UnityEditor.AssetDatabase.GUIDToAssetPath(g))).ToList();
-    }
-
     public static void RefactorAsset<T>(Func<T, bool> callback) where T : UnityEngine.Object
     {
-        var assets = FindAssets<T>();
+        var guids = UnityEditor.AssetDatabase.FindAssets($"t:{typeof(T)}", null);
+        var assets = guids.Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<T>(
+            UnityEditor.AssetDatabase.GUIDToAssetPath(g))).ToList();
+        
         try
         {
             var total = assets.Count;
@@ -33,7 +29,11 @@ public static class RefactorExamples
                 {
                     break;
                 }
+                
+                UnityEditor.EditorUtility.SetDirty(asset);
             }
+            
+            UnityEditor.AssetDatabase.SaveAssets();
         }
         finally
         {
