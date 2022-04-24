@@ -99,6 +99,9 @@ public static class RefactorExamples
     {
         RefactorTools.RefactorMonoBehaviour<ComponentB>(true, delegate(GameObject gameObject)
         {
+            if (gameObject.GetComponent<ComponentC>() == null)
+                return false;
+            
             // will ignore this case
             if ("Child_WithComponentB".Equals(gameObject.name))
                 return false;
@@ -127,7 +130,7 @@ public static class RefactorExamples
             JsonUtility.FromJsonOverwrite(json, childComponentB);
 
             var componentC = gameObject.GetComponent<ComponentC>();
-            if (componentC.referenceToB == componentB)
+            if (componentC != null && componentC.referenceToB == componentB)
             {
                 componentC.referenceToB = childComponentB;
             }
