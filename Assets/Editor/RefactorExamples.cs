@@ -1,3 +1,4 @@
+using RefactorExamplesData;
 using Utils.Editor;
 
 public static class RefactorExamples
