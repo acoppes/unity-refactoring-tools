@@ -218,6 +218,14 @@ PrefabInstance:
       propertyPath: previousValue
       value: 231
       objectReference: {fileID: 0}
+    - target: {fileID: 854457505094657706, guid: e7f9a2868922ade469f9694df41a6f51, type: 3}
+      propertyPath: speedBaseValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 854457505094657706, guid: e7f9a2868922ade469f9694df41a6f51, type: 3}
+      propertyPath: speedIncrementValue
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 2770954233856461040, guid: e7f9a2868922ade469f9694df41a6f51, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -354,8 +362,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48f0fcf16e7957b419f80c8f0e69592e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previousValue: 125
-  newValue: 
+  speedBaseValue: 5
+  speedIncrementValue: 1
+  speed:
+    baseValue: 0
+    incrementValue: 0
 --- !u!4 &1922105453
 Transform:
   m_ObjectHideFlags: 0

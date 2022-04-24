@@ -44,5 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48f0fcf16e7957b419f80c8f0e69592e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previousValue: 552
-  newValue: 
+  speedBaseValue: 7
+  speedIncrementValue: 2
+  speed:
+    baseValue: 0
+    incrementValue: 0

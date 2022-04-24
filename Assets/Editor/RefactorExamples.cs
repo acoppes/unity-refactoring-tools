@@ -23,7 +23,11 @@ public static class RefactorExamples
             var behaviours = gameObject.GetComponentsInChildren<CustomBehaviour>();
             foreach (var behaviour in behaviours)
             {
-                behaviour.newValue = $"VALUE:{behaviour.previousValue}";
+                behaviour.speed = new Speed
+                {
+                    baseValue = behaviour.speedBaseValue,
+                    incrementValue = behaviour.speedIncrementValue
+                };
             }
             return true;
         });

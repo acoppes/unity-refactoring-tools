@@ -11,6 +11,14 @@ PrefabInstance:
       propertyPath: previousValue
       value: 875
       objectReference: {fileID: 0}
+    - target: {fileID: 854457505094657706, guid: e7f9a2868922ade469f9694df41a6f51, type: 3}
+      propertyPath: speedBaseValue
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 854457505094657706, guid: e7f9a2868922ade469f9694df41a6f51, type: 3}
+      propertyPath: speedIncrementValue
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2770954233856461040, guid: e7f9a2868922ade469f9694df41a6f51, type: 3}
       propertyPath: m_RootOrder
       value: 0
