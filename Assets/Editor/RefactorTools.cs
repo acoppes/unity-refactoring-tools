@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -99,11 +100,7 @@ namespace Utils.Editor
                     
                     UnityEditor.PrefabUtility.SaveAsPrefabAsset(contents, UnityEditor.AssetDatabase.GetAssetPath(prefab));
                     UnityEditor.PrefabUtility.UnloadPrefabContents(contents);
-                    
-                    // UnityEditor.EditorUtility.SetDirty(prefab);
                 }
-            
-                // UnityEditor.AssetDatabase.SaveAssets();
             }
             finally
             {
@@ -112,6 +109,68 @@ namespace Utils.Editor
             
             // Then iterate in all scenes (if include scenes is true)
 
+            if (!includeScenes)
+                return;
+            
+             var allScenesGuids = new List<string>();
+
+            // Here we filter by all assets of type scene but under Assets folder to avoid all other scenes from 
+            // external packages.
+            allScenesGuids.AddRange(UnityEditor.AssetDatabase.FindAssets("t:scene", new []
+            {
+                "Assets"
+            }));
+
+            UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {allScenesGuids.Count} scenes", "Starting...", 0);
+
+            var allScenesCount = allScenesGuids.Count;
+            for (var i = 0; i < allScenesCount; i++)
+            {
+                var sceneGuid = allScenesGuids[i];
+                var scenePath = UnityEditor.AssetDatabase.GUIDToAssetPath(sceneGuid);
+
+                try
+                {
+                    UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {allScenesGuids.Count} scenes", scenePath,
+                        i / (float) allScenesCount);
+                    
+                    var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(scenePath, 
+                        UnityEditor.SceneManagement.OpenSceneMode.Single);
+
+                    var componentsList = new List<T>();
+
+                    // We can iterate over root objects and collect stuff to run the refactor over
+                    var rootObjects = scene.GetRootGameObjects();
+                    for (var j = 0; j < rootObjects.Length; j++)
+                    {
+                        var go = rootObjects[j];
+                        var components = go.GetComponentsInChildren<T>(true);
+                        componentsList.AddRange(components.ToList());
+                    }
+
+                    var modified = false;
+
+                    foreach (var component in componentsList)
+                    {
+                        var result = callback(component.gameObject);
+                        if (result)
+                        {
+                            modified = true;
+                        }
+                    }
+
+                    if (modified)
+                    {
+                        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+                        UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+                    }
+                    
+                }
+                finally
+                {
+                    UnityEditor.EditorUtility.ClearProgressBar();
+                }
+            }
         }
     }
 }
