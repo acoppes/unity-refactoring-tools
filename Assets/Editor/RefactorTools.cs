@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using UnityEngine;
 
 namespace Utils.Editor
 {
@@ -42,47 +43,75 @@ namespace Utils.Editor
             }
         }
         
-        public static void RefactorMonoBehaviour<T>(bool includeScenes, Func<T, bool> callback) where T : UnityEngine.Object
+        public static void RefactorMonoBehaviour<T>(bool includeScenes, Func<GameObject, bool> callback) where T : UnityEngine.Component
         {
-            var guids = UnityEditor.AssetDatabase.FindAssets($"t:{typeof(T)}", null);
-            var assets = guids.Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<T>(
+            var guids = UnityEditor.AssetDatabase.FindAssets($"t:prefab", null);
+            var prefabs = guids.Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
                 UnityEditor.AssetDatabase.GUIDToAssetPath(g))).ToList();
             
-            // First, iterate in prefabs, no variants
-            
-            // Then, iterate in prefab variants
-            
-            // Then iterate in all scenes (if include scenes is true)
+            // Ignore prefabs without component T
+            prefabs = prefabs.Where(p => p.GetComponentInChildren<T>(true) != null).ToList();
 
+            // We sort by no variant prefabs first
+            prefabs.Sort(delegate(GameObject a, GameObject b)
+            {
+                var aIsVariant = UnityEditor.PrefabUtility.IsPartOfVariantPrefab(a);
+                var bIsVariant = UnityEditor.PrefabUtility.IsPartOfVariantPrefab(b);
+
+                if (!aIsVariant && bIsVariant)
+                    return -1;
+
+                if (aIsVariant && !bIsVariant)
+                    return 1;
+
+                // if both no variants or both variants, we just use the name to compare just to be consistent.
+                return a.name.CompareTo(b.name);
+            });
+            
+            prefabs.ForEach(delegate(GameObject o)
+            {
+                Debug.Log(o.name);
+            });
+            
             try
             {
-                var total = assets.Count;
+                var total = prefabs.Count;
 
-                UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {total} assets of type {typeof(T).Name}", "Start", 0);
+                UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {total} prefabs with {typeof(T).Name}", "Start", 0);
 
-                for (var i = 0; i < assets.Count; i++)
+                for (var i = 0; i < prefabs.Count; i++)
                 {
-                    var asset = assets[i];
-                    UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {assets.Count} assets of type {typeof(T).Name}",
-                        asset.name,
+                    var prefab = prefabs[i];
+                    UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {prefabs.Count} assets of type {typeof(T).Name}",
+                        prefab.name,
                         i / (float)total);
+                    
+                    var contents = UnityEditor.PrefabUtility.LoadPrefabContents(UnityEditor.AssetDatabase.GetAssetPath(prefab));
 
-                    var result = callback(asset);
+                    var result = callback(contents);
+
                     // Just to break the loop if something is wrong...
                     if (!result)
                     {
+                        UnityEditor.PrefabUtility.UnloadPrefabContents(contents);
                         break;
                     }
-                
-                    UnityEditor.EditorUtility.SetDirty(asset);
+                    
+                    UnityEditor.PrefabUtility.SaveAsPrefabAsset(contents, UnityEditor.AssetDatabase.GetAssetPath(prefab));
+                    UnityEditor.PrefabUtility.UnloadPrefabContents(contents);
+                    
+                    // UnityEditor.EditorUtility.SetDirty(prefab);
                 }
             
-                UnityEditor.AssetDatabase.SaveAssets();
+                // UnityEditor.AssetDatabase.SaveAssets();
             }
             finally
             {
                 UnityEditor.EditorUtility.ClearProgressBar();
             }
+            
+            // Then iterate in all scenes (if include scenes is true)
+
         }
     }
 }
