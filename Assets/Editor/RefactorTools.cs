@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Utils.Editor
@@ -181,12 +180,14 @@ namespace Utils.Editor
                 }
             }
 
-            var newActiveScene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(activeScene, OpenSceneMode.Single);
+            var newActiveScene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(activeScene, 
+                UnityEditor.SceneManagement.OpenSceneMode.Single);
             for (var i = 0; i < loadedScenes; i++)
             {
                 if (loadedScenesList[i].Equals(activeScene))
                     continue;
-                UnityEditor.SceneManagement.EditorSceneManager.OpenScene(loadedScenesList[i], OpenSceneMode.Additive);
+                UnityEditor.SceneManagement.EditorSceneManager.OpenScene(loadedScenesList[i], 
+                    UnityEditor.SceneManagement.OpenSceneMode.Additive);
             }
             UnityEditor.SceneManagement.EditorSceneManager.SetActiveScene(newActiveScene);
         }
