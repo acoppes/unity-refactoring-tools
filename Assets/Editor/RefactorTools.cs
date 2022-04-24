@@ -150,15 +150,12 @@ namespace Utils.Editor
 
                     foreach (var component in componentsList)
                     {
-                        var gameObject = component.gameObject;
-                        var result = callback(gameObject);
+                        var result = callback(component.gameObject);
                         if (result)
                         {
                             modified = true;
                             UnityEditor.EditorUtility.SetDirty(component);
                         }
-                        
-                        // UnityEditor.EditorUtility.SetDirty(gameObject);
                     }
 
                     if (modified)
