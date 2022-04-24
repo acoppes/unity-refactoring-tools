@@ -55,4 +55,38 @@ public static class RefactorExamples
             return true;
         });
     }
+    
+    [MenuItem("Refactors/Refactor ComponentB to Child")]
+    public static void Refactor4()
+    {
+        RefactorTools.RefactorMonoBehaviour<ComponentB>(true, delegate(GameObject gameObject)
+        {
+            GameObject childObject;
+
+            if (gameObject.transform.childCount == 0)
+            {
+                childObject = new GameObject("Child_WithComponentB");
+                childObject.transform.SetParent(gameObject.transform);
+            }
+            else
+            {
+                childObject = gameObject.transform.GetChild(0).gameObject;
+            }
+
+            var childComponentB = childObject.GetComponent<ComponentB>();
+
+            if (childComponentB == null)
+            {
+                childComponentB = childObject.AddComponent<ComponentB>();
+            }
+             
+            var componentB = gameObject.GetComponent<ComponentB>();
+            var json = JsonUtility.ToJson(componentB);
+            JsonUtility.FromJsonOverwrite(json, childComponentB);
+            
+            Object.DestroyImmediate(componentB);
+            
+            return true;
+        });
+    }
 }
