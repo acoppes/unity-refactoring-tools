@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 
 namespace Utils.Editor
 {
@@ -9,20 +11,20 @@ namespace Utils.Editor
     {
         public static void RefactorAsset<T>(Func<T, bool> callback) where T : UnityEngine.Object
         {
-            var guids = UnityEditor.AssetDatabase.FindAssets($"t:{typeof(T)}", null);
-            var assets = guids.Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<T>(
-                UnityEditor.AssetDatabase.GUIDToAssetPath(g))).ToList();
+            var guids = AssetDatabase.FindAssets($"t:{typeof(T)}", null);
+            var assets = guids.Select(g => AssetDatabase.LoadAssetAtPath<T>(
+                AssetDatabase.GUIDToAssetPath(g))).ToList();
         
             try
             {
                 var total = assets.Count;
 
-                UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {total} assets of type {typeof(T).Name}", "Start", 0);
+                EditorUtility.DisplayProgressBar($"Refactoring {total} assets of type {typeof(T).Name}", "Start", 0);
 
                 for (var i = 0; i < assets.Count; i++)
                 {
                     var asset = assets[i];
-                    UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {assets.Count} assets of type {typeof(T).Name}",
+                    EditorUtility.DisplayProgressBar($"Refactoring {assets.Count} assets of type {typeof(T).Name}",
                         asset.name,
                         i / (float)total);
 
@@ -30,26 +32,25 @@ namespace Utils.Editor
                     
                     if (result)
                     {
-                        UnityEditor.EditorUtility.SetDirty(asset);
-                        break;
+                        EditorUtility.SetDirty(asset);
                     }
                 }
             
-                UnityEditor.AssetDatabase.SaveAssets();
+                AssetDatabase.SaveAssets();
             }
             finally
             {
-                UnityEditor.EditorUtility.ClearProgressBar();
+                EditorUtility.ClearProgressBar();
             }
         }
         
         public static void RefactorMonoBehaviour<T>(bool includeScenes, 
-            Func<GameObject, bool> callback) where T : UnityEngine.Component
+            Func<GameObject, bool> callback) where T : Component
         {
-            var guids = UnityEditor.AssetDatabase.FindAssets($"t:prefab", null);
+            var guids = AssetDatabase.FindAssets($"t:prefab", null);
             var prefabs = guids
-                .Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
-                    UnityEditor.AssetDatabase.GUIDToAssetPath(g))).ToList();
+                .Select(g => AssetDatabase.LoadAssetAtPath<GameObject>(
+                    AssetDatabase.GUIDToAssetPath(g))).ToList();
             
             // Ignore prefabs without component T
             prefabs = prefabs.Where(p => p.GetComponentInChildren<T>(true) != null).ToList();
@@ -57,8 +58,8 @@ namespace Utils.Editor
             // We sort by no variant prefabs first
             prefabs.Sort(delegate(GameObject a, GameObject b)
             {
-                var aIsVariant = UnityEditor.PrefabUtility.IsPartOfVariantPrefab(a);
-                var bIsVariant = UnityEditor.PrefabUtility.IsPartOfVariantPrefab(b);
+                var aIsVariant = PrefabUtility.IsPartOfVariantPrefab(a);
+                var bIsVariant = PrefabUtility.IsPartOfVariantPrefab(b);
 
                 if (!aIsVariant && bIsVariant)
                     return -1;
@@ -79,30 +80,30 @@ namespace Utils.Editor
             {
                 var total = prefabs.Count;
 
-                UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {total} prefabs with {typeof(T).Name}", "Start", 0);
+                EditorUtility.DisplayProgressBar($"Refactoring {total} prefabs with {typeof(T).Name}", "Start", 0);
 
                 for (var i = 0; i < prefabs.Count; i++)
                 {
                     var prefab = prefabs[i];
-                    UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {prefabs.Count} assets of type {typeof(T).Name}",
+                    EditorUtility.DisplayProgressBar($"Refactoring {prefabs.Count} assets of type {typeof(T).Name}",
                         prefab.name,
                         i / (float)total);
                     
-                    var contents = UnityEditor.PrefabUtility.LoadPrefabContents(UnityEditor.AssetDatabase.GetAssetPath(prefab));
+                    var contents = PrefabUtility.LoadPrefabContents(AssetDatabase.GetAssetPath(prefab));
 
                     var result = callback(contents);
 
                     if (result)
                     {
-                        UnityEditor.PrefabUtility.SaveAsPrefabAsset(contents, UnityEditor.AssetDatabase.GetAssetPath(prefab));
+                        PrefabUtility.SaveAsPrefabAsset(contents, AssetDatabase.GetAssetPath(prefab));
                     }
                     
-                    UnityEditor.PrefabUtility.UnloadPrefabContents(contents);
+                    PrefabUtility.UnloadPrefabContents(contents);
                 }
             }
             finally
             {
-                UnityEditor.EditorUtility.ClearProgressBar();
+                EditorUtility.ClearProgressBar();
             }
             
             // Then iterate in all scenes (if include scenes is true)
@@ -111,11 +112,12 @@ namespace Utils.Editor
                 return;
 
             var loadedScenesList = new List<string>();
-            var loadedScenes = UnityEditor.SceneManagement.EditorSceneManager.sceneCount;
-            var activeScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().path;
+            var loadedScenes = EditorSceneManager.sceneCount;
+            var activeScene = EditorSceneManager.GetActiveScene().path;
+            
             for (var i = 0; i < loadedScenes; i++)
             {
-                var scene = UnityEditor.SceneManagement.EditorSceneManager.GetSceneAt(i);
+                var scene = EditorSceneManager.GetSceneAt(i);
                 loadedScenesList.Add(scene.path);
             }
             
@@ -123,26 +125,26 @@ namespace Utils.Editor
 
             // Here we filter by all assets of type scene but under Assets folder to avoid all other scenes from 
             // external packages.
-            allScenesGuids.AddRange(UnityEditor.AssetDatabase.FindAssets("t:scene", new []
+            allScenesGuids.AddRange(AssetDatabase.FindAssets("t:scene", new []
             {
                 "Assets"
             }));
 
-            UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {allScenesGuids.Count} scenes", "Starting...", 0);
+            EditorUtility.DisplayProgressBar($"Refactoring {allScenesGuids.Count} scenes", "Starting...", 0);
 
             var allScenesCount = allScenesGuids.Count;
             for (var i = 0; i < allScenesCount; i++)
             {
                 var sceneGuid = allScenesGuids[i];
-                var scenePath = UnityEditor.AssetDatabase.GUIDToAssetPath(sceneGuid);
+                var scenePath = AssetDatabase.GUIDToAssetPath(sceneGuid);
 
                 try
                 {
-                    UnityEditor.EditorUtility.DisplayProgressBar($"Refactoring {allScenesGuids.Count} scenes", scenePath,
+                    EditorUtility.DisplayProgressBar($"Refactoring {allScenesGuids.Count} scenes", scenePath,
                         i / (float) allScenesCount);
                     
-                    var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(scenePath, 
-                        UnityEditor.SceneManagement.OpenSceneMode.Single);
+                    var scene = EditorSceneManager.OpenScene(scenePath, 
+                        OpenSceneMode.Single);
 
                     var componentsList = new List<T>();
 
@@ -163,33 +165,33 @@ namespace Utils.Editor
                         if (result)
                         {
                             modified = true;
-                            UnityEditor.EditorUtility.SetDirty(component);
+                            EditorUtility.SetDirty(component);
                         }
                     }
 
                     if (modified)
                     {
-                        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
-                        UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+                        EditorSceneManager.MarkSceneDirty(scene);
+                        EditorSceneManager.SaveScene(scene);
                     }
                     
                 }
                 finally
                 {
-                    UnityEditor.EditorUtility.ClearProgressBar();
+                    EditorUtility.ClearProgressBar();
                 }
             }
 
-            var newActiveScene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(activeScene, 
-                UnityEditor.SceneManagement.OpenSceneMode.Single);
+            var newActiveScene = EditorSceneManager.OpenScene(activeScene, 
+                OpenSceneMode.Single);
             for (var i = 0; i < loadedScenes; i++)
             {
                 if (loadedScenesList[i].Equals(activeScene))
                     continue;
-                UnityEditor.SceneManagement.EditorSceneManager.OpenScene(loadedScenesList[i], 
-                    UnityEditor.SceneManagement.OpenSceneMode.Additive);
+                EditorSceneManager.OpenScene(loadedScenesList[i], 
+                    OpenSceneMode.Additive);
             }
-            UnityEditor.SceneManagement.EditorSceneManager.SetActiveScene(newActiveScene);
+            EditorSceneManager.SetActiveScene(newActiveScene);
         }
     }
 }
