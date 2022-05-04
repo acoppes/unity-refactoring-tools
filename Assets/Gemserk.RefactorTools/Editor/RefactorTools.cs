@@ -11,15 +11,42 @@ namespace Gemserk.RefactorTools.Editor
 {
     public static class RefactorTools
     {
-        public static void DestroyMonoBehaviour<T>() where T : Component
+        public static void DestroyMonoBehaviour<T>(bool destroyObject) where T : Component
         {
             RefactorMonoBehaviour<T>(true, delegate(GameObject gameObject)
             {
                 var components = gameObject.GetComponentsInChildren<T>();
+                
+                var objectsToDestroy = new List<GameObject>();
+                
                 foreach (var component in components)
                 {
+                    var componentGameObject = component.gameObject;
                     Object.DestroyImmediate(component);
+
+                    if (!destroyObject) 
+                        continue;
+
+                    if (componentGameObject.transform.childCount != 0)
+                        continue;
+
+                    var otherComponents  = componentGameObject.GetComponents<Component>();
+                    
+                    // Transform is always there
+                    if (otherComponents.Length > 1)
+                        continue;
+                    
+                    if (!objectsToDestroy.Contains(componentGameObject))
+                    {
+                        objectsToDestroy.Add(componentGameObject);
+                    }
                 }
+
+                foreach (var objectToDestroy in objectsToDestroy)
+                {
+                    Object.DestroyImmediate(objectToDestroy);
+                }
+                
                 return true;
             });
         }

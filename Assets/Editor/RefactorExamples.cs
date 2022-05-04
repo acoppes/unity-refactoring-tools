@@ -148,7 +148,7 @@ public static class RefactorExamples
     [MenuItem("Refactors/Destroy DestroyableBehaviour")]
     public static void RefactorCustomMonoBehaviour()
     {
-        RefactorTools.DestroyMonoBehaviour<DestroyableBehaviour>();
+        RefactorTools.DestroyMonoBehaviour<DestroyableBehaviour>(true);
     }
 
 }
