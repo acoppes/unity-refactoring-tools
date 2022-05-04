@@ -1,7 +1,7 @@
+using Gemserk.RefactorTools.Editor;
 using RefactorExamplesData;
 using UnityEditor;
 using UnityEngine;
-using Utils.Editor;
 
 public static class RefactorExamples
 {

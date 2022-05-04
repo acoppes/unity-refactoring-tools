@@ -1,6 +1,6 @@
 {
     "name": "Gemserk.RefactorTools.Editor",
-    "rootNamespace": "Gemserk.RefactorTools",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [
         "Editor"
