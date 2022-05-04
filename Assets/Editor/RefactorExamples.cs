@@ -144,4 +144,11 @@ public static class RefactorExamples
             return true;
         });
     }
+    
+    [MenuItem("Refactors/Destroy Custom MonoBehaviour")]
+    public static void RefactorCustomMonoBehaviour()
+    {
+        RefactorTools.DestroyMonoBehaviour<CustomBehaviour>();
+    }
+
 }
