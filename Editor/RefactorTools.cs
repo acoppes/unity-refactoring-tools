@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
 
-namespace Utils.Editor
+namespace Gemserk.RefactorTools.Editor
 {
     public static class RefactorTools
     {
         public static void RefactorAsset<T>(Func<T, bool> callback) where T : UnityEngine.Object
         {
-            var guids = AssetDatabase.FindAssets($"t:{typeof(T)}", null);
-            var assets = guids.Select(g => AssetDatabase.LoadAssetAtPath<T>(
-                AssetDatabase.GUIDToAssetPath(g))).ToList();
-        
+            var assets = AssetDatabaseExt.FindAssets<T>();
+
             try
             {
                 var total = assets.Count;
@@ -47,10 +45,7 @@ namespace Utils.Editor
         public static void RefactorMonoBehaviour<T>(bool includeScenes, 
             Func<GameObject, bool> callback) where T : Component
         {
-            var guids = AssetDatabase.FindAssets($"t:prefab", null);
-            var prefabs = guids
-                .Select(g => AssetDatabase.LoadAssetAtPath<GameObject>(
-                    AssetDatabase.GUIDToAssetPath(g))).ToList();
+            var prefabs = AssetDatabaseExt.FindPrefabs<T>();
             
             // Ignore prefabs without component T
             prefabs = prefabs.Where(p => p.GetComponentInChildren<T>(true) != null).ToList();
