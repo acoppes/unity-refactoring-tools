@@ -11,9 +11,14 @@ namespace Gemserk.RefactorTools.Editor
 {
     public static class RefactorTools
     {
+        public class RefactorParameters
+        {
+            public bool isPrefab;
+        }
+        
         public static void DestroyMonoBehaviour<T>(bool destroyObject) where T : Component
         {
-            RefactorMonoBehaviour<T>(true, delegate(GameObject gameObject)
+            RefactorMonoBehaviour<T>(true, delegate(GameObject gameObject, RefactorParameters parameters)
             {
                 var components = gameObject.GetComponentsInChildren<T>();
                 
@@ -44,6 +49,10 @@ namespace Gemserk.RefactorTools.Editor
 
                 foreach (var objectToDestroy in objectsToDestroy)
                 {
+                    // Avoid destroying the main GameObject if in prefab mode.
+                    if (parameters.isPrefab && gameObject == objectToDestroy)
+                        continue;
+                    
                     Object.DestroyImmediate(objectToDestroy);
                 }
                 
@@ -85,7 +94,7 @@ namespace Gemserk.RefactorTools.Editor
         }
         
         public static void RefactorMonoBehaviour<T>(bool includeScenes, 
-            Func<GameObject, bool> callback) where T : Component
+            Func<GameObject, RefactorParameters, bool> callback) where T : Component
         {
             var prefabs = AssetDatabaseExt.FindPrefabs<T>();
             
@@ -128,7 +137,10 @@ namespace Gemserk.RefactorTools.Editor
                     
                     var contents = PrefabUtility.LoadPrefabContents(AssetDatabase.GetAssetPath(prefab));
 
-                    var result = callback(contents);
+                    var result = callback(contents, new RefactorParameters
+                    {
+                        isPrefab = true
+                    });
 
                     if (result)
                     {
@@ -200,7 +212,11 @@ namespace Gemserk.RefactorTools.Editor
                     {
                         var gameObject = component.gameObject;
                         
-                        var result = callback(gameObject);
+                        var result = callback(gameObject, new RefactorParameters
+                        {
+                            isPrefab = false
+                        });
+                        
                         if (result)
                         {
                             modified = true;
