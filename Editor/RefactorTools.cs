@@ -116,12 +116,7 @@ namespace Gemserk.RefactorTools.Editor
                 // if both no variants or both variants, we just use the name to compare just to be consistent.
                 return a.name.CompareTo(b.name);
             });
-            
-            prefabs.ForEach(delegate(GameObject o)
-            {
-                Debug.Log(o.name);
-            });
-            
+
             try
             {
                 var total = prefabs.Count;
