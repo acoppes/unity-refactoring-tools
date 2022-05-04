@@ -4,12 +4,27 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Gemserk.RefactorTools.Editor
 {
     public static class RefactorTools
     {
-        public static void RefactorAsset<T>(Func<T, bool> callback) where T : UnityEngine.Object
+        public static void DestroyMonoBehaviour<T>() where T : Component
+        {
+            RefactorMonoBehaviour<T>(true, delegate(GameObject gameObject)
+            {
+                var components = gameObject.GetComponentsInChildren<T>();
+                foreach (var component in components)
+                {
+                    Object.DestroyImmediate(component);
+                }
+                return true;
+            });
+        }
+        
+        public static void RefactorAsset<T>(Func<T, bool> callback) where T : Object
         {
             var assets = AssetDatabaseExt.FindAssets<T>();
 
@@ -107,12 +122,12 @@ namespace Gemserk.RefactorTools.Editor
                 return;
 
             var loadedScenesList = new List<string>();
-            var loadedScenes = EditorSceneManager.sceneCount;
-            var activeScene = EditorSceneManager.GetActiveScene().path;
+            var loadedScenes = SceneManager.sceneCount;
+            var activeScene = SceneManager.GetActiveScene().path;
             
             for (var i = 0; i < loadedScenes; i++)
             {
-                var scene = EditorSceneManager.GetSceneAt(i);
+                var scene = SceneManager.GetSceneAt(i);
                 loadedScenesList.Add(scene.path);
             }
             
@@ -156,11 +171,20 @@ namespace Gemserk.RefactorTools.Editor
 
                     foreach (var component in componentsList)
                     {
-                        var result = callback(component.gameObject);
+                        var gameObject = component.gameObject;
+                        
+                        var result = callback(gameObject);
                         if (result)
                         {
                             modified = true;
-                            EditorUtility.SetDirty(component);
+                            if (component != null)
+                            {
+                                EditorUtility.SetDirty(component);
+                            }
+                            else if (gameObject != null)
+                            {
+                                EditorUtility.SetDirty(gameObject);
+                            }
                         }
                     }
 
@@ -186,7 +210,7 @@ namespace Gemserk.RefactorTools.Editor
                 EditorSceneManager.OpenScene(loadedScenesList[i], 
                     OpenSceneMode.Additive);
             }
-            EditorSceneManager.SetActiveScene(newActiveScene);
+            SceneManager.SetActiveScene(newActiveScene);
         }
     }
 }
