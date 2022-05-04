@@ -18,7 +18,8 @@ public static class RefactorExamples
     [MenuItem("Refactors/Refactor Custom MonoBehaviour")]
     public static void Refactor2()
     {
-        RefactorTools.RefactorMonoBehaviour<CustomBehaviour>(true, delegate(GameObject gameObject)
+        RefactorTools.RefactorMonoBehaviour<CustomBehaviour>(true, delegate(GameObject gameObject, 
+            RefactorTools.RefactorParameters _)
         {
             var behaviours = gameObject.GetComponentsInChildren<CustomBehaviour>();
             foreach (var behaviour in behaviours)
@@ -36,7 +37,8 @@ public static class RefactorExamples
     [MenuItem("Refactors/Refactor ComponentA to Parent")]
     public static void Refactor3()
     {
-        RefactorTools.RefactorMonoBehaviour<ComponentA>(true, delegate(GameObject gameObject)
+        RefactorTools.RefactorMonoBehaviour<ComponentA>(true, delegate(GameObject gameObject, 
+            RefactorTools.RefactorParameters _)
         {
             if (gameObject.transform.parent == null)
                 return false;
@@ -63,7 +65,8 @@ public static class RefactorExamples
     [MenuItem("Refactors/Refactor ComponentB to Child")]
     public static void Refactor4()
     {
-        RefactorTools.RefactorMonoBehaviour<ComponentB>(true, delegate(GameObject gameObject)
+        RefactorTools.RefactorMonoBehaviour<ComponentB>(true, delegate(GameObject gameObject, 
+            RefactorTools.RefactorParameters _)
         {
             // will ignore this case
             if ("Child_WithComponentB".Equals(gameObject.name))
@@ -101,7 +104,8 @@ public static class RefactorExamples
     [MenuItem("Refactors/Refactor ComponentB to Child With Reference")]
     public static void Refactor5()
     {
-        RefactorTools.RefactorMonoBehaviour<ComponentB>(true, delegate(GameObject gameObject)
+        RefactorTools.RefactorMonoBehaviour<ComponentB>(true, delegate(GameObject gameObject, 
+            RefactorTools.RefactorParameters _)
         {
             if (gameObject.GetComponent<ComponentC>() == null)
                 return false;
