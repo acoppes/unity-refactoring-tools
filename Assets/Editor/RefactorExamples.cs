@@ -145,10 +145,10 @@ public static class RefactorExamples
         });
     }
     
-    [MenuItem("Refactors/Destroy Custom MonoBehaviour")]
+    [MenuItem("Refactors/Destroy DestroyableBehaviour")]
     public static void RefactorCustomMonoBehaviour()
     {
-        RefactorTools.DestroyMonoBehaviour<CustomBehaviour>();
+        RefactorTools.DestroyMonoBehaviour<DestroyableBehaviour>();
     }
 
 }
