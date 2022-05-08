@@ -13,12 +13,20 @@ namespace Gemserk.RefactorTools.Editor
     {
         public class RefactorParameters
         {
+            public bool considerScenes;
+        }
+    
+        public class RefactorData
+        {
             public bool isPrefab;
         }
         
         public static void DestroyMonoBehaviour<T>(bool destroyObject) where T : Component
         {
-            RefactorMonoBehaviour<T>(true, delegate(GameObject gameObject, RefactorParameters parameters)
+            RefactorMonoBehaviour<T>(new RefactorParameters
+            {
+                considerScenes = true
+            }, delegate(GameObject gameObject, RefactorData parameters)
             {
                 var components = gameObject.GetComponentsInChildren<T>();
                 
@@ -93,8 +101,8 @@ namespace Gemserk.RefactorTools.Editor
             }
         }
         
-        public static void RefactorMonoBehaviour<T>(bool includeScenes, 
-            Func<GameObject, RefactorParameters, bool> callback) where T : Component
+        public static void RefactorMonoBehaviour<T>(RefactorParameters parameters, 
+            Func<GameObject, RefactorData, bool> callback) where T : Component
         {
             var prefabs = AssetDatabaseExt.FindPrefabs<T>();
             
@@ -132,7 +140,7 @@ namespace Gemserk.RefactorTools.Editor
                     
                     var contents = PrefabUtility.LoadPrefabContents(AssetDatabase.GetAssetPath(prefab));
 
-                    var result = callback(contents, new RefactorParameters
+                    var result = callback(contents, new RefactorData
                     {
                         isPrefab = true
                     });
@@ -152,7 +160,7 @@ namespace Gemserk.RefactorTools.Editor
             
             // Then iterate in all scenes (if include scenes is true)
 
-            if (!includeScenes)
+            if (!parameters.considerScenes)
                 return;
 
             var loadedScenesList = new List<string>();
@@ -207,7 +215,7 @@ namespace Gemserk.RefactorTools.Editor
                     {
                         var gameObject = component.gameObject;
                         
-                        var result = callback(gameObject, new RefactorParameters
+                        var result = callback(gameObject, new RefactorData
                         {
                             isPrefab = false
                         });
