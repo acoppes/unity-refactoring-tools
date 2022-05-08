@@ -2,6 +2,7 @@
 
 * Changing to have a ParameterObject to declare how refactor should behave.
 * Added RefactorResult struct to return after the refactor to allow the generic logic to do more stuff (in the future).
+* Added more info in RefactorData.
 
 # 0.0.2
 
