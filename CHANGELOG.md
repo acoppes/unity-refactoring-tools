@@ -1,3 +1,7 @@
+# 0.0.3
+
+* Changing to have a ParameterObject to declare how refactor should behave.
+
 # 0.0.2
 
 * Added general refactor to remove MonoBehaviour from prefabs and scenes, and optinally destroy the empty GameObject in case there are no more components.
