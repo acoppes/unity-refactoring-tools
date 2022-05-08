@@ -19,6 +19,8 @@ namespace Gemserk.RefactorTools.Editor
         public struct RefactorData
         {
             public bool isPrefab;
+            public string scenePath;
+            public bool inScene;
         }
 
         public struct RefactorResult
@@ -225,7 +227,9 @@ namespace Gemserk.RefactorTools.Editor
                         
                         var result = callback(gameObject, new RefactorData
                         {
-                            isPrefab = false
+                            isPrefab = false,
+                            scenePath = scenePath,
+                            inScene = true
                         });
                         
                         if (result.completed)
