@@ -11,14 +11,19 @@ namespace Gemserk.RefactorTools.Editor
 {
     public static class RefactorTools
     {
-        public class RefactorParameters
+        public struct RefactorParameters
         {
             public bool considerScenes;
         }
     
-        public class RefactorData
+        public struct RefactorData
         {
             public bool isPrefab;
+        }
+
+        public struct RefactorResult
+        {
+            public bool completed;
         }
         
         public static void DestroyMonoBehaviour<T>(bool destroyObject) where T : Component
@@ -64,7 +69,10 @@ namespace Gemserk.RefactorTools.Editor
                     Object.DestroyImmediate(objectToDestroy);
                 }
                 
-                return true;
+                return new RefactorResult
+                {
+                    completed = true
+                };
             });
         }
         
@@ -102,7 +110,7 @@ namespace Gemserk.RefactorTools.Editor
         }
         
         public static void RefactorMonoBehaviour<T>(RefactorParameters parameters, 
-            Func<GameObject, RefactorData, bool> callback) where T : Component
+            Func<GameObject, RefactorData, RefactorResult> callback) where T : Component
         {
             var prefabs = AssetDatabaseExt.FindPrefabs<T>();
             
@@ -145,7 +153,7 @@ namespace Gemserk.RefactorTools.Editor
                         isPrefab = true
                     });
 
-                    if (result)
+                    if (result.completed)
                     {
                         PrefabUtility.SaveAsPrefabAsset(contents, AssetDatabase.GetAssetPath(prefab));
                     }
@@ -220,7 +228,7 @@ namespace Gemserk.RefactorTools.Editor
                             isPrefab = false
                         });
                         
-                        if (result)
+                        if (result.completed)
                         {
                             modified = true;
                             if (component != null)
