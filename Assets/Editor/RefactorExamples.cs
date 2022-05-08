@@ -33,7 +33,10 @@ public static class RefactorExamples
                     incrementValue = behaviour.speedIncrementValue
                 };
             }
-            return true;
+            return new RefactorTools.RefactorResult
+            {
+                completed = true
+            };
         });
     }
     
@@ -47,7 +50,12 @@ public static class RefactorExamples
             RefactorTools.RefactorData _)
         {
             if (gameObject.transform.parent == null)
-                return false;
+            {
+                return new RefactorTools.RefactorResult
+                {
+                    completed = false
+                };
+            }
             
             var parentGameObject = gameObject.transform.parent.gameObject;
             
@@ -64,7 +72,10 @@ public static class RefactorExamples
             
             Object.DestroyImmediate(componentA);
             
-            return true;
+            return new RefactorTools.RefactorResult
+            {
+                completed = true
+            };
         });
     }
     
@@ -79,7 +90,12 @@ public static class RefactorExamples
         {
             // will ignore this case
             if ("Child_WithComponentB".Equals(gameObject.name))
-                return false;
+            {
+                return new RefactorTools.RefactorResult
+                {
+                    completed = false
+                };
+            }
             
             GameObject childObject;
 
@@ -106,7 +122,10 @@ public static class RefactorExamples
             
             Object.DestroyImmediate(componentB);
             
-            return true;
+            return new RefactorTools.RefactorResult
+            {
+                completed = true
+            };
         });
     }
     
@@ -120,11 +139,21 @@ public static class RefactorExamples
             RefactorTools.RefactorData _)
         {
             if (gameObject.GetComponent<ComponentC>() == null)
-                return false;
+            {
+                return new RefactorTools.RefactorResult
+                {
+                    completed = false
+                };
+            }
             
             // will ignore this case
             if ("Child_WithComponentB".Equals(gameObject.name))
-                return false;
+            {
+                return new RefactorTools.RefactorResult
+                {
+                    completed = false
+                };
+            }
             
             GameObject childObject;
 
@@ -157,7 +186,10 @@ public static class RefactorExamples
             
             Object.DestroyImmediate(componentB);
             
-            return true;
+            return new RefactorTools.RefactorResult
+            {
+                completed = true
+            };
         });
     }
     
