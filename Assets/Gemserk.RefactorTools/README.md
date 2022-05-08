@@ -68,7 +68,6 @@ Here are some ideas on how to expand the project.
 * Customize generic refactor logic by expanding `RefactorParameters`, `RefactorData` and `RefactorResult`.
 * More refactor methods for general usage, like moving MonoBehaviour to another object, etc. 
 * Customizable window to perform general refactors.
-* Downgrade to Unity 2019.x or so.
 * Automatize refactors using SerializedObjects and SerializedProperties to refactor field changes.
 ### Collaborate
 

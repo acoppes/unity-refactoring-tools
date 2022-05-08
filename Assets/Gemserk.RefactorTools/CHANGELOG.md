@@ -1,3 +1,7 @@
+# 0.0.4 
+
+* Downgraded to Unity 2019.4.x.
+
 # 0.0.3
 
 * Changing to have a ParameterObject to declare how refactor should behave.

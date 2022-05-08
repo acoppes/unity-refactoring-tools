@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "displayName": "Unity Refactor Tools by Gemserk",
   "description": "Unity Refactor Tools from https://blog.gemserk.com/2022/04/24/refactoring-prefabs-and-unity-objects/ and https://github.com/acoppes/unity-refactoring-tools",
-  "unity": "2021.3",
+  "unity": "2019.4",
   "unityRelease": "1f1",
   "dependencies": { },
   "keywords": [
