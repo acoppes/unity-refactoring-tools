@@ -16,7 +16,8 @@ If you want, for example, copy some MonoBehaviour fields to new field and consid
 ```csharp
 RefactorTools.RefactorMonoBehaviour<CustomBehaviour>(new RefactorTools.RefactorParameters
 {
-    considerScenes = true
+    prefabs = AssetDatabaseExt.FindPrefabs<CustomBehaviour>(),
+    scenes = AssetDatabaseExt.FindAllScenes()
 }, delegate(GameObject gameObject, 
     RefactorTools.RefactorData _)
 {
@@ -43,7 +44,8 @@ You can customize refactors by using extra data received when refactoring with `
 ```csharp
 RefactorTools.RefactorMonoBehaviour<CustomBehaviour>(new RefactorTools.RefactorParameters
 {
-    considerScenes = true
+    prefabs = AssetDatabaseExt.FindPrefabs<CustomBehaviour>(),
+    scenes = AssetDatabaseExt.FindAllScenes()
 }, delegate(GameObject gameObject, 
     RefactorTools.RefactorData data)
 {
