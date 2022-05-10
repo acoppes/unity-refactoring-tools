@@ -1,3 +1,7 @@
+# 0.0.6
+
+* Fixed to sort by root prefab first when refactoring.
+
 # 0.0.5
 
 * Changed to pass prefabs and scenes as parameters.
