@@ -1,3 +1,7 @@
+# 0.0.5
+
+* Changed to pass prefabs and scenes as parameters.
+
 # 0.0.4 
 
 * Downgraded to Unity 2019.4.x.
