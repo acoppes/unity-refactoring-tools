@@ -38,25 +38,6 @@ namespace Gemserk.RefactorTools.Editor
             return FindPrefabs(new []{typeof(T1), typeof(T2), typeof(T3)} , options, folders);
         }
 
-        public static void SortByRootPrefab(List<GameObject> prefabs)
-        {
-            // We sort by no variant prefabs first
-            prefabs.Sort(delegate(GameObject a, GameObject b)
-            {
-                var aIsVariant = PrefabUtility.IsPartOfVariantPrefab(a);
-                var bIsVariant = PrefabUtility.IsPartOfVariantPrefab(b);
-
-                if (!aIsVariant && bIsVariant)
-                    return -1;
-
-                if (aIsVariant && !bIsVariant)
-                    return 1;
-
-                // if both no variants or both variants, we just use the name to compare just to be consistent.
-                return a.name.CompareTo(b.name);
-            });
-        }
-
         public static List<GameObject> FindPrefabs(IEnumerable<Type> types, FindOptions options, string[] folders)
         {
             var considerChildren = options.HasFlag(FindOptions.ConsiderChildren);

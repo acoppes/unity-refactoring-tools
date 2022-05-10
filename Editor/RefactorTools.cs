@@ -113,10 +113,31 @@ namespace Gemserk.RefactorTools.Editor
             }
         }
         
+        private static void SortByRootPrefabFirst(List<GameObject> prefabs)
+        {
+            // We sort by no variant prefabs first
+            prefabs.Sort(delegate(GameObject a, GameObject b)
+            {
+                var aIsVariant = PrefabUtility.IsPartOfVariantPrefab(a);
+                var bIsVariant = PrefabUtility.IsPartOfVariantPrefab(b);
+
+                if (!aIsVariant && bIsVariant)
+                    return -1;
+
+                if (aIsVariant && !bIsVariant)
+                    return 1;
+
+                // if both no variants or both variants, we just use the name to compare just to be consistent.
+                return a.name.CompareTo(b.name);
+            });
+        }
+        
         public static void RefactorMonoBehaviour<T>(RefactorParameters parameters, 
             Func<GameObject, RefactorData, RefactorResult> callback) where T : Component
         {
-            var prefabs = parameters.prefabs;
+            var prefabs = new List<GameObject>(parameters.prefabs);
+            
+            SortByRootPrefabFirst(prefabs);
 
             try
             {
