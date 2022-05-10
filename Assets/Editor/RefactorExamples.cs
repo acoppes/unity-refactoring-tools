@@ -20,7 +20,8 @@ public static class RefactorExamples
     {
         RefactorTools.RefactorMonoBehaviour<CustomBehaviour>(new RefactorTools.RefactorParameters
         {
-            considerScenes = true
+            prefabs = AssetDatabaseExt.FindPrefabs<CustomBehaviour>(),
+            scenes = AssetDatabaseExt.FindAllScenes()
         }, delegate(GameObject gameObject, 
             RefactorTools.RefactorData _)
         {
@@ -45,7 +46,8 @@ public static class RefactorExamples
     {
         RefactorTools.RefactorMonoBehaviour<ComponentA>(new RefactorTools.RefactorParameters
         {
-            considerScenes = true
+            prefabs = AssetDatabaseExt.FindPrefabs<ComponentA>(),
+            scenes = AssetDatabaseExt.FindAllScenes()
         }, delegate(GameObject gameObject, 
             RefactorTools.RefactorData _)
         {
@@ -84,7 +86,8 @@ public static class RefactorExamples
     {
         RefactorTools.RefactorMonoBehaviour<ComponentB>(new RefactorTools.RefactorParameters
         {
-            considerScenes = true
+            prefabs = AssetDatabaseExt.FindPrefabs<ComponentB>(),
+            scenes = AssetDatabaseExt.FindAllScenes()
         }, delegate(GameObject gameObject, 
             RefactorTools.RefactorData _)
         {
@@ -134,7 +137,8 @@ public static class RefactorExamples
     {
         RefactorTools.RefactorMonoBehaviour<ComponentB>(new RefactorTools.RefactorParameters
         {
-            considerScenes = true
+            prefabs = AssetDatabaseExt.FindPrefabs<ComponentB>(),
+            scenes = AssetDatabaseExt.FindAllScenes()
         }, delegate(GameObject gameObject, 
             RefactorTools.RefactorData _)
         {

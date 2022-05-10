@@ -13,7 +13,8 @@ namespace Gemserk.RefactorTools.Editor
     {
         public struct RefactorParameters
         {
-            public bool considerScenes;
+            public List<GameObject> prefabs;
+            public List<string> scenes;
         }
     
         public struct RefactorData
@@ -32,7 +33,8 @@ namespace Gemserk.RefactorTools.Editor
         {
             RefactorMonoBehaviour<T>(new RefactorParameters
             {
-                considerScenes = true
+                prefabs = AssetDatabaseExt.FindPrefabs<T>(),
+                scenes = AssetDatabaseExt.FindAllScenes()
             }, delegate(GameObject gameObject, RefactorData parameters)
             {
                 var components = gameObject.GetComponentsInChildren<T>();
@@ -114,26 +116,7 @@ namespace Gemserk.RefactorTools.Editor
         public static void RefactorMonoBehaviour<T>(RefactorParameters parameters, 
             Func<GameObject, RefactorData, RefactorResult> callback) where T : Component
         {
-            var prefabs = AssetDatabaseExt.FindPrefabs<T>();
-            
-            // Ignore prefabs without component T
-            prefabs = prefabs.Where(p => p.GetComponentInChildren<T>(true) != null).ToList();
-
-            // We sort by no variant prefabs first
-            prefabs.Sort(delegate(GameObject a, GameObject b)
-            {
-                var aIsVariant = PrefabUtility.IsPartOfVariantPrefab(a);
-                var bIsVariant = PrefabUtility.IsPartOfVariantPrefab(b);
-
-                if (!aIsVariant && bIsVariant)
-                    return -1;
-
-                if (aIsVariant && !bIsVariant)
-                    return 1;
-
-                // if both no variants or both variants, we just use the name to compare just to be consistent.
-                return a.name.CompareTo(b.name);
-            });
+            var prefabs = parameters.prefabs;
 
             try
             {
@@ -170,7 +153,9 @@ namespace Gemserk.RefactorTools.Editor
             
             // Then iterate in all scenes (if include scenes is true)
 
-            if (!parameters.considerScenes)
+            var scenes = parameters.scenes;
+            
+            if (scenes.Count == 0)
                 return;
 
             var loadedScenesList = new List<string>();
@@ -182,28 +167,19 @@ namespace Gemserk.RefactorTools.Editor
                 var scene = SceneManager.GetSceneAt(i);
                 loadedScenesList.Add(scene.path);
             }
-            
-            var allScenesGuids = new List<string>();
 
-            // Here we filter by all assets of type scene but under Assets folder to avoid all other scenes from 
-            // external packages.
-            allScenesGuids.AddRange(AssetDatabase.FindAssets("t:scene", new []
+            var scenesCount = scenes.Count;
+
+            EditorUtility.DisplayProgressBar($"Refactoring {scenesCount} scenes", "Starting...", 0);
+
+            for (var i = 0; i < scenesCount; i++)
             {
-                "Assets"
-            }));
-
-            EditorUtility.DisplayProgressBar($"Refactoring {allScenesGuids.Count} scenes", "Starting...", 0);
-
-            var allScenesCount = allScenesGuids.Count;
-            for (var i = 0; i < allScenesCount; i++)
-            {
-                var sceneGuid = allScenesGuids[i];
-                var scenePath = AssetDatabase.GUIDToAssetPath(sceneGuid);
-
+                var scenePath = scenes[i];
+                
                 try
                 {
-                    EditorUtility.DisplayProgressBar($"Refactoring {allScenesGuids.Count} scenes", scenePath,
-                        i / (float) allScenesCount);
+                    EditorUtility.DisplayProgressBar($"Refactoring {scenesCount} scenes", scenePath,
+                        i / (float) scenesCount);
                     
                     var scene = EditorSceneManager.OpenScene(scenePath, 
                         OpenSceneMode.Single);
