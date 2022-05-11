@@ -1,3 +1,7 @@
+# 0.0.7
+
+* Check scenes and prefab parameters are not null.
+
 # 0.0.6
 
 * Fixed to sort by root prefab first when refactoring.
