@@ -1,6 +1,7 @@
 # 0.0.7
 
 * Check scenes and prefab parameters are not null.
+* Fixed bug with search filter with FindAssets() 
 
 # 0.0.6
 
