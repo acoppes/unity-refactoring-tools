@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.gemserk.upmgitpusher": {
-      "version": "0.0.18",
+      "version": "0.0.20",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
