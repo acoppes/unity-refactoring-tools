@@ -15,12 +15,18 @@ namespace Gemserk.RefactorTools.Editor
             None = 0,
             ConsiderChildren = 1
         }
+
+        public static string GetSearchFilter<T>()
+        {
+            return $"t:{typeof(T).Name}";
+        }
         
         public static List<T> FindAssets<T>(string[] folders = null) where T : Object
         {
-            var guids = AssetDatabase.FindAssets($"t:{typeof(T)}", folders);
+            var searchFilter = GetSearchFilter<T>();
+            var guids = AssetDatabase.FindAssets(searchFilter, folders);
             return guids.Select(g => AssetDatabase.LoadAssetAtPath<T>(
-                AssetDatabase.GUIDToAssetPath((string)g))).ToList();
+                AssetDatabase.GUIDToAssetPath(g))).ToList();
         }
 
         public static List<GameObject> FindPrefabs<T>(FindOptions options = 0, string[] folders = null)
