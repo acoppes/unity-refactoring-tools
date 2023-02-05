@@ -1,3 +1,7 @@
+# 0.0.8
+
+* Added support for FindAssets(type) instead of just generics.
+
 # 0.0.7
 
 * Check scenes and prefab parameters are not null.
