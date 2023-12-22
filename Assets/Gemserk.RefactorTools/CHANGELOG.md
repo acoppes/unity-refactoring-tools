@@ -1,3 +1,7 @@
+# 0.0.9
+
+* Now FindPrefabs<T> can search for components in inactive children too.
+
 # 0.0.8
 
 * Added support for FindAssets(type) instead of just generics.
