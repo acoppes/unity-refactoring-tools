@@ -12,8 +12,9 @@ namespace Gemserk.RefactorTools.Editor
         [Flags]
         public enum FindOptions
         {
-            None = 0,
-            ConsiderChildren = 1
+            None = 1 << 0,
+            ConsiderChildren = 1 << 1,
+            ConsiderInactiveChildren = 1 << 2
         }
 
         public static string GetSearchFilter<T>()
@@ -61,7 +62,8 @@ namespace Gemserk.RefactorTools.Editor
 
         public static List<GameObject> FindPrefabs(IEnumerable<Type> types, FindOptions options, string[] folders)
         {
-            var considerChildren = options.HasFlag(FindOptions.ConsiderChildren);
+            var considerChildren = options.HasFlag(FindOptions.ConsiderChildren) || options.HasFlag(FindOptions.ConsiderInactiveChildren);
+            var considerDisabled = options.HasFlag(FindOptions.ConsiderInactiveChildren);
 
             var guids = AssetDatabase.FindAssets("t:Prefab", folders);
 
@@ -74,7 +76,7 @@ namespace Gemserk.RefactorTools.Editor
                 // By default is the AND of all specified Types
                 foreach (var type in types)
                 {
-                    result = result.Where(p => p.GetComponentInChildren(type) != null);
+                    result = result.Where(p => p.GetComponentInChildren(type, considerDisabled) != null);
                 }
                 return result.ToList();
             }
