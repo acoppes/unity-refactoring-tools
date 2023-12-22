@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3003130989838701478}
-  - component: {fileID: 7081441301387942265}
+  - component: {fileID: 6358728789479525970}
   m_Layer: 0
   m_Name: ChildrenWithBehaviour
   m_TagString: Untagged
@@ -62,7 +62,7 @@ Transform:
   m_Father: {fileID: 2770954233856461040}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7081441301387942265
+--- !u!114 &6358728789479525970
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,11 +71,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 6866429096650873373}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48f0fcf16e7957b419f80c8f0e69592e, type: 3}
+  m_Script: {fileID: 11500000, guid: 799ba017f21d40d7bbfc673f052c74d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedBaseValue: 0
-  speedIncrementValue: 0
-  speed:
-    baseValue: 0
-    incrementValue: 0

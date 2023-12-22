@@ -202,4 +202,62 @@ public static class RefactorExamples
     {
         RefactorTools.DestroyMonoBehaviour<DestroyableBehaviour>(true);
     }
+    
+    [MenuItem("Refactors/Refactor LogObjects With Component In Children")]
+    public static void RefactorLogConsiderChildren()
+    {
+        RefactorTools.RefactorMonoBehaviour<ChildrenBehaviour>(new RefactorTools.RefactorParameters
+        {
+            prefabs = AssetDatabaseExt.FindPrefabs<ChildrenBehaviour>(AssetDatabaseExt.FindOptions.ConsiderChildren),
+            scenes = AssetDatabaseExt.FindAllScenes()
+        }, delegate(GameObject gameObject, 
+            RefactorTools.RefactorData _)
+        {
+            Debug.Log(gameObject.name);
+            
+            var refactorResult = new RefactorTools.RefactorResult
+            {
+                completed = false
+            };
+            
+            var childrenBehaviours = gameObject.GetComponentsInChildren<ChildrenBehaviour>();
+
+            foreach (var childrenBehaviour in childrenBehaviours)
+            {
+                childrenBehaviour.value = "NEW VALUE";
+                refactorResult.completed = true;
+            }
+            
+            return refactorResult;
+        });
+    }
+    
+    [MenuItem("Refactors/Refactor LogObjects With Component In Children (consider disabled)")]
+    public static void RefactorLogConsiderChildrenConsiderDisabled()
+    {
+        RefactorTools.RefactorMonoBehaviour<ChildrenBehaviour>(new RefactorTools.RefactorParameters
+        {
+            prefabs = AssetDatabaseExt.FindPrefabs<ChildrenBehaviour>(AssetDatabaseExt.FindOptions.ConsiderInactiveChildren),
+            scenes = AssetDatabaseExt.FindAllScenes()
+        }, delegate(GameObject gameObject, 
+            RefactorTools.RefactorData _)
+        {
+            Debug.Log(gameObject.name);
+            
+            var refactorResult = new RefactorTools.RefactorResult
+            {
+                completed = false
+            };
+            
+            var childrenBehaviours = gameObject.GetComponentsInChildren<ChildrenBehaviour>(true);
+
+            foreach (var childrenBehaviour in childrenBehaviours)
+            {
+                childrenBehaviour.value = "NEW VALUE";
+                refactorResult.completed = true;
+            }
+            
+            return refactorResult;
+        });
+    }
 }
