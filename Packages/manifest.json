@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.gemserk.upmgitpusher": "0.0.20",
+    "com.gemserk.upmgitpusher": "0.0.21",
     "com.unity.ide.rider": "3.0.21",
     "com.unity.ide.visualstudio": "2.0.18",
     "com.unity.ide.vscode": "1.2.5",
