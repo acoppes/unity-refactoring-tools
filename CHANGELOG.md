@@ -1,3 +1,7 @@
+# 0.0.10
+
+* Added general result for prefabs refactor to show failed prefabs (when missing scripts for example) and scenes.
+
 # 0.0.9
 
 * Now FindPrefabs<T> can search for components in inactive children too.
