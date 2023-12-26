@@ -28,6 +28,12 @@ namespace Gemserk.RefactorTools.Editor
         {
             public bool completed;
         }
+
+        public struct RefactorMonoBehaviourResult
+        {
+            public List<GameObject> failedPrefabs;
+            public List<string> failedScenes;
+        }
         
         public static void DestroyMonoBehaviour<T>(bool destroyObject) where T : Component
         {
@@ -132,9 +138,15 @@ namespace Gemserk.RefactorTools.Editor
             });
         }
         
-        public static void RefactorMonoBehaviour<T>(RefactorParameters parameters, 
+        public static RefactorMonoBehaviourResult RefactorMonoBehaviour<T>(RefactorParameters parameters, 
             Func<GameObject, RefactorData, RefactorResult> callback) where T : Component
         {
+            var generalResult = new RefactorMonoBehaviourResult()
+            {
+                failedPrefabs = new List<GameObject>(),
+                failedScenes = new List<string>()
+            };
+            
             if (parameters.prefabs != null && parameters.prefabs.Count > 0)
             {
                 var prefabs = new List<GameObject>(parameters.prefabs);
@@ -163,7 +175,11 @@ namespace Gemserk.RefactorTools.Editor
 
                         if (result.completed)
                         {
-                            PrefabUtility.SaveAsPrefabAsset(contents, AssetDatabase.GetAssetPath(prefab));
+                            PrefabUtility.SaveAsPrefabAsset(contents, AssetDatabase.GetAssetPath(prefab), out var success);
+                            if (!success)
+                            {
+                                generalResult.failedPrefabs.Add(prefab);
+                            }
                         }
 
                         PrefabUtility.UnloadPrefabContents(contents);
@@ -248,7 +264,10 @@ namespace Gemserk.RefactorTools.Editor
                         if (modified)
                         {
                             EditorSceneManager.MarkSceneDirty(scene);
-                            EditorSceneManager.SaveScene(scene);
+                            if (!EditorSceneManager.SaveScene(scene))
+                            {
+                                generalResult.failedScenes.Add(scene.path);
+                            }
                         }
 
                     }
@@ -270,6 +289,8 @@ namespace Gemserk.RefactorTools.Editor
 
                 SceneManager.SetActiveScene(newActiveScene);
             }
+            
+            return generalResult;
         }
     }
 }

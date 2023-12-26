@@ -235,7 +235,7 @@ public static class RefactorExamples
     [MenuItem("Refactors/Refactor LogObjects With Component In Children (consider disabled)")]
     public static void RefactorLogConsiderChildrenConsiderDisabled()
     {
-        RefactorTools.RefactorMonoBehaviour<ChildrenBehaviour>(new RefactorTools.RefactorParameters
+        var generalResult = RefactorTools.RefactorMonoBehaviour<ChildrenBehaviour>(new RefactorTools.RefactorParameters
         {
             prefabs = AssetDatabaseExt.FindPrefabs<ChildrenBehaviour>(AssetDatabaseExt.FindOptions.ConsiderInactiveChildren),
             scenes = AssetDatabaseExt.FindAllScenes()
@@ -259,5 +259,10 @@ public static class RefactorExamples
             
             return refactorResult;
         });
+
+        foreach (var failedToRefactorPrefab in generalResult.failedPrefabs)
+        {
+            Debug.LogError($"Failed to refactor prefab {failedToRefactorPrefab.name}, probably a missing script can't save prefab.", failedToRefactorPrefab);
+        }
     }
 }
