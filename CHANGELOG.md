@@ -1,3 +1,7 @@
+# 0.0.11
+
+* Show user save modified scenes dialog before refactoring (if considering scenes).
+
 # 0.0.10
 
 * Added general result for prefabs refactor to show failed prefabs (when missing scripts for example) and scenes.
