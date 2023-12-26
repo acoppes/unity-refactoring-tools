@@ -141,6 +141,19 @@ namespace Gemserk.RefactorTools.Editor
         public static RefactorMonoBehaviourResult RefactorMonoBehaviour<T>(RefactorParameters parameters, 
             Func<GameObject, RefactorData, RefactorResult> callback) where T : Component
         {
+            var scenes = parameters.scenes;
+            
+            if (scenes != null && scenes.Count > 0)
+            {
+                if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                {
+                    return new RefactorMonoBehaviourResult()
+                    {
+                        
+                    };
+                }
+            }
+            
             var generalResult = new RefactorMonoBehaviourResult()
             {
                 failedPrefabs = new List<GameObject>(),
@@ -193,7 +206,7 @@ namespace Gemserk.RefactorTools.Editor
             
             // Then iterate in all scenes (if include scenes is true)
 
-            var scenes = parameters.scenes;
+    
             
             if (scenes != null && scenes.Count > 0)
             {
