@@ -1,6 +1,6 @@
 {
   "name": "com.gemserk.refactortools",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "displayName": "com.gemserk.refactortools",
   "description": "Unity Refactor Tools from https://blog.gemserk.com/2022/04/24/refactoring-prefabs-and-unity-objects/ and https://github.com/acoppes/unity-refactoring-tools",
   "unity": "2020.3",
