@@ -139,10 +139,44 @@ namespace Gemserk.RefactorTools.Editor
                     return 1;
 
                 // if both no variants or both variants, we just use the name to compare just to be consistent.
-                return a.name.CompareTo(b.name);
+                return string.Compare(a.name, b.name, StringComparison.Ordinal);
             });
         }
-        
+
+
+        public static void ReplaceScript<T1, T2>(GameObject gameObject, AssetDatabaseExt.FindOptions findOptions = AssetDatabaseExt.FindOptions.None) 
+            where T1 : Component 
+            where T2: Component
+        {
+            var previousTypeList = gameObject.GetComponents<T1>();
+
+            if (findOptions == AssetDatabaseExt.FindOptions.ConsiderChildren)
+            {
+                previousTypeList = gameObject.GetComponentsInChildren<T1>();
+            } else if (findOptions == AssetDatabaseExt.FindOptions.ConsiderInactiveChildren)
+            {
+                previousTypeList = gameObject.GetComponentsInChildren<T1>(true);
+            }
+
+            var monoScripts = AssetDatabaseExt.FindAssets<MonoScript>(typeof(T2).Name).ToList();
+
+            if (monoScripts.Count == 0)
+            {
+                Debug.LogError($"No MonoScripts for type {typeof(T2).Name} found.");
+                return;
+            }
+            
+            var newClassMonoScript = monoScripts[0];
+            
+            foreach (var component in previousTypeList)
+            {
+                var componentSerializedObject = new SerializedObject(component);
+                var scriptProperty = componentSerializedObject.FindProperty("m_Script");
+                scriptProperty.objectReferenceValue = newClassMonoScript;
+                componentSerializedObject.ApplyModifiedProperties();
+            }
+        }
+
         public static RefactorMonoBehaviourResult RefactorMonoBehaviour<T>(RefactorParameters parameters, 
             Func<GameObject, RefactorData, RefactorResult> callback) where T : Component
         {
@@ -210,8 +244,6 @@ namespace Gemserk.RefactorTools.Editor
             }
             
             // Then iterate in all scenes (if include scenes is true)
-
-    
             
             if (scenes != null && scenes.Count > 0)
             {
