@@ -265,4 +265,11 @@ public static class RefactorExamples
             Debug.LogError($"Failed to refactor prefab {failedToRefactorPrefab.name}, probably a missing script can't save prefab.", failedToRefactorPrefab);
         }
     }
+    
+    [MenuItem("Refactors/Replace Class Example")]
+    public static void ReplaceClassExample()
+    {
+        var gameObject = Selection.activeGameObject;
+        RefactorTools.ReplaceScript<ComponentA, ComponentD>(gameObject);
+    }
 }

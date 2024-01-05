@@ -1,5 +1,6 @@
 # 0.0.13
 
+* New ReplaceScript refactor method, to change from one MonoBehaviour to another.
 * DestroyMonoBehaviour refactor receives optional refactor parameters now too.
 
 # 0.0.12
