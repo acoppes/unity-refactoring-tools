@@ -62,33 +62,41 @@ namespace Gemserk.RefactorTools.Editor
 
         public static List<GameObject> FindPrefabs(IEnumerable<Type> types, FindOptions options, string[] folders)
         {
-            var considerChildren = options.HasFlag(FindOptions.ConsiderChildren) || options.HasFlag(FindOptions.ConsiderInactiveChildren);
-            var considerDisabled = options.HasFlag(FindOptions.ConsiderInactiveChildren);
-
-            var guids = AssetDatabase.FindAssets("t:Prefab", folders);
-
-            var prefabs = guids.Select(g => AssetDatabase.LoadAssetAtPath<GameObject>(
-                AssetDatabase.GUIDToAssetPath(g))).ToList();
-
-            if (considerChildren)
+            try
             {
-                IEnumerable<GameObject> result = prefabs;
-                // By default is the AND of all specified Types
-                foreach (var type in types)
+                EditorUtility.DisplayProgressBar($"Finding Prefabs with types", "Start", 0);
+                
+                var considerChildren = options.HasFlag(FindOptions.ConsiderChildren) || options.HasFlag(FindOptions.ConsiderInactiveChildren);
+                var considerDisabled = options.HasFlag(FindOptions.ConsiderInactiveChildren);
+
+                var guids = AssetDatabase.FindAssets("t:Prefab", folders);
+
+                var prefabs = guids.Select(g => AssetDatabase.LoadAssetAtPath<GameObject>(
+                    AssetDatabase.GUIDToAssetPath(g))).ToList();
+
+                if (considerChildren)
                 {
-                    result = result.Where(p => p.GetComponentInChildren(type, considerDisabled) != null);
+                    IEnumerable<GameObject> result = prefabs;
+                    // By default is the AND of all specified Types
+                    foreach (var type in types)
+                    {
+                        result = result.Where(p => p.GetComponentInChildren(type, considerDisabled) != null);
+                    }
+                    return result.ToList();
                 }
-                return result.ToList();
-            }
-            else
-            {
-                IEnumerable<GameObject> result = prefabs;
-                // By default is the AND of all specified Types
-                foreach (var type in types)
+                else
                 {
-                    result = result.Where(p => p.GetComponent(type) != null);
+                    IEnumerable<GameObject> result = prefabs;
+                    // By default is the AND of all specified Types
+                    foreach (var type in types)
+                    {
+                        result = result.Where(p => p.GetComponent(type) != null);
+                    }
+                    return result.ToList();
                 }
-                return result.ToList();
+                
+            } finally {
+                EditorUtility.ClearProgressBar();
             }
         }
 
