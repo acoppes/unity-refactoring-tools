@@ -1,3 +1,7 @@
+# 0.0.12
+
+* Display progress bar for find prefabs.
+
 # 0.0.11
 
 * Show user save modified scenes dialog before refactoring (if considering scenes).
