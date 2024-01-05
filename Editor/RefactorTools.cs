@@ -37,11 +37,16 @@ namespace Gemserk.RefactorTools.Editor
         
         public static void DestroyMonoBehaviour<T>(bool destroyObject) where T : Component
         {
-            RefactorMonoBehaviour<T>(new RefactorParameters
+            DestroyMonoBehaviour<T>(destroyObject, new RefactorParameters
             {
                 prefabs = AssetDatabaseExt.FindPrefabs<T>(),
                 scenes = AssetDatabaseExt.FindAllScenes()
-            }, delegate(GameObject gameObject, RefactorData parameters)
+            });
+        }
+        
+        public static void DestroyMonoBehaviour<T>(bool destroyObject, RefactorParameters refactorParameters) where T : Component
+        {
+            RefactorMonoBehaviour<T>(refactorParameters, delegate(GameObject gameObject, RefactorData parameters)
             {
                 var components = gameObject.GetComponentsInChildren<T>();
                 

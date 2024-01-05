@@ -1,3 +1,7 @@
+# 0.0.13
+
+* DestroyMonoBehaviour refactor receives optional refactor parameters now too.
+
 # 0.0.12
 
 * Display progress bar for find prefabs.
