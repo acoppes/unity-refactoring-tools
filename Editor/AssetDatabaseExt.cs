@@ -30,16 +30,27 @@ namespace Gemserk.RefactorTools.Editor
         public static List<T> FindAssets<T>(string[] folders = null) where T : Object
         {
             return FindAssets(typeof(T), folders).Select(t => t as T).ToList();
-
-            // var searchFilter = GetSearchFilter<T>();
-            // var guids = AssetDatabase.FindAssets(searchFilter, folders);
-            // return guids.Select(g => AssetDatabase.LoadAssetAtPath<T>(
-            //     AssetDatabase.GUIDToAssetPath(g))).ToList();
+        }
+        
+        public static List<T> FindAssets<T>(string text, string[] folders = null) where T : Object
+        {
+            return FindAssets(typeof(T), text, folders).Select(t => t as T).ToList();
         }
         
         public static List<Object> FindAssets(Type type, string[] folders = null)
         {
+            return FindAssets(type, null, folders);
+        }
+        
+        public static List<Object> FindAssets(Type type, string text, string[] folders = null)
+        {
             var searchFilter = GetSearchFilter(type);
+            
+            if (!string.IsNullOrEmpty(text))
+            {
+                searchFilter += $" {text}";
+            }
+            
             var guids = AssetDatabase.FindAssets(searchFilter, folders);
             return guids.Select(g => AssetDatabase.LoadAssetAtPath(
                 AssetDatabase.GUIDToAssetPath(g), type)).ToList();

@@ -1,6 +1,7 @@
 # 0.0.12
 
 * Display progress bar for find prefabs.
+* Added API to find assets with specific text in the name.
 
 # 0.0.11
 
