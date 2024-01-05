@@ -24,4 +24,14 @@ public static class AssetDatabaseExamples
             Debug.Log(asset.name);
         }
     }
+    
+    [MenuItem("Examples/AssetDatabase/Find Assets Of Type Matching Name")]
+    public static void FindAssetsOfTypeMatchingName()
+    {
+        var assets = AssetDatabaseExt.FindAssets(typeof(AssetType2), "Super");
+        foreach (var asset in assets)
+        {
+            Debug.Log(asset.name);
+        }
+    }
 }
