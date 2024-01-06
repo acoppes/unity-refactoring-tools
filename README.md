@@ -77,4 +77,4 @@ Feel free to create issues for feature requests and/or submit pull requests with
 
 ### Contact
 
-<a href="https://twitter.com/intent/tweet?screen_name=arielsan&ref_src=twsrc%5Etfw"><img src="screenshots/twitter_logo.png" width="48"/><br/>@arielsan</a>
+<a href="https://arielcoppes.dev">My Personal Website & Dev Blog</a>
