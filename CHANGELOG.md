@@ -1,3 +1,7 @@
+# 0.0.14
+
+* Refactor methods for Components/MonoBehaviours work now with interfaces.
+
 # 0.0.13
 
 * New ReplaceScript refactor method, to change from one MonoBehaviour to another.
