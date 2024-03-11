@@ -272,4 +272,29 @@ public static class RefactorExamples
         var gameObject = Selection.activeGameObject;
         RefactorTools.ReplaceScript<ComponentA, ComponentD>(gameObject);
     }
+    
+    [MenuItem("Refactors/Refactor Components implementing interface")]
+    public static void RefactorInterface()
+    {
+        RefactorTools.RefactorMonoBehaviour<ICustomComponent>(new RefactorTools.RefactorParameters
+        {
+            prefabs = AssetDatabaseExt.FindPrefabs<ICustomComponent>(),
+            scenes = AssetDatabaseExt.FindAllScenes()
+        }, delegate(GameObject gameObject, 
+            RefactorTools.RefactorData data)
+        {
+
+            var components = gameObject.GetComponentsInChildren<ICustomComponent>();
+
+            foreach (var component in components)
+            {
+                Debug.Log($"found {component.GetType()} with value {component.GetValue()}");
+            }
+            
+            return new RefactorTools.RefactorResult
+            {
+                completed = false
+            };
+        });
+    }
 }

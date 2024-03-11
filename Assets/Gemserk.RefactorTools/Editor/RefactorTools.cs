@@ -35,7 +35,7 @@ namespace Gemserk.RefactorTools.Editor
             public List<string> failedScenes;
         }
         
-        public static void DestroyMonoBehaviour<T>(bool destroyObject) where T : Component
+        public static void DestroyMonoBehaviour<T>(bool destroyObject)
         {
             DestroyMonoBehaviour<T>(destroyObject, new RefactorParameters
             {
@@ -44,7 +44,7 @@ namespace Gemserk.RefactorTools.Editor
             });
         }
         
-        public static void DestroyMonoBehaviour<T>(bool destroyObject, RefactorParameters refactorParameters) where T : Component
+        public static void DestroyMonoBehaviour<T>(bool destroyObject, RefactorParameters refactorParameters)
         {
             RefactorMonoBehaviour<T>(refactorParameters, delegate(GameObject gameObject, RefactorData parameters)
             {
@@ -52,8 +52,16 @@ namespace Gemserk.RefactorTools.Editor
                 
                 var objectsToDestroy = new List<GameObject>();
                 
-                foreach (var component in components)
+                foreach (var t in components)
                 {
+                    var component = t as Component;
+                    
+                    // Shouldn't be null since we can only get Components from gameobject.
+                    if (component == null)
+                    {
+                        continue;
+                    }
+                    
                     var componentGameObject = component.gameObject;
                     Object.DestroyImmediate(component);
 
@@ -178,7 +186,7 @@ namespace Gemserk.RefactorTools.Editor
         }
 
         public static RefactorMonoBehaviourResult RefactorMonoBehaviour<T>(RefactorParameters parameters, 
-            Func<GameObject, RefactorData, RefactorResult> callback) where T : Component
+            Func<GameObject, RefactorData, RefactorResult> callback)
         {
             var scenes = parameters.scenes;
             
@@ -286,8 +294,16 @@ namespace Gemserk.RefactorTools.Editor
 
                         var modified = false;
 
-                        foreach (var component in componentsList)
+                        foreach (var t in componentsList)
                         {
+                            var component = t as Component;
+
+                            // Shouldn't be null since we can only get Components from gameobject.
+                            if (component == null)
+                            {
+                                continue;
+                            }
+                            
                             var gameObject = component.gameObject;
 
                             var result = callback(gameObject, new RefactorData
