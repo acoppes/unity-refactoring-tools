@@ -55,6 +55,25 @@ namespace Gemserk.RefactorTools.Editor
             return guids.Select(g => AssetDatabase.LoadAssetAtPath(
                 AssetDatabase.GUIDToAssetPath(g), type)).ToList();
         }
+        
+        /// <summary>
+        /// Similar to FindAssets but the main difference is that it doesn't filter by Type before searching but
+        /// after, so it will be a bit slower, finding all objects and then checking them if they match the type.
+        /// </summary>
+        /// <param name="type">The type the asset should match (can be an interface)</param>
+        /// <param name="text">Text filters for the search pattern.</param>
+        /// <param name="folders">The folders to lookout for assets.</param>
+        /// <returns></returns>
+        public static List<Object> FindAssetsAll(Type type, string text = null, string[] folders = null)
+        {
+            var assets = FindAssets(typeof(Object), text, folders);
+            return assets.Where(type.IsInstanceOfType).ToList();
+        }
+        
+        public static List<Object> FindAssetsAll<T>(string text = null, string[] folders = null)
+        {
+            return FindAssetsAll(typeof(T), text, folders);
+        }
 
         public static List<GameObject> FindPrefabs<T>(FindOptions options = 0, string[] folders = null)
         {
