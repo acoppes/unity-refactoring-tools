@@ -1,3 +1,7 @@
+# 0.0.15
+
+* New FindAssetsAll that allows any type, even interfaces, when searching for assets in the AssetsDatabase.
+
 # 0.0.14
 
 * Refactor methods for Components/MonoBehaviours work now with interfaces.

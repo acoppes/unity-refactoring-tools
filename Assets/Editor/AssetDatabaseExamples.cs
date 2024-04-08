@@ -34,4 +34,14 @@ public static class AssetDatabaseExamples
             Debug.Log(asset.name);
         }
     }
+    
+    [MenuItem("Examples/AssetDatabase/Find Assets Of interface Type")]
+    public static void FindAssetsOfInterfaceType()
+    {
+        var assets = AssetDatabaseExt.FindAssetsAll(typeof(IAsset));
+        foreach (var asset in assets)
+        {
+            Debug.Log(asset.name);
+        }
+    }
 }
