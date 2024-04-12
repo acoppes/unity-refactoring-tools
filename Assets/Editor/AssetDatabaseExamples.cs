@@ -1,4 +1,5 @@
 using Gemserk.RefactorTools.Editor;
+using RefactorExamplesData;
 using SuperNamespaace;
 using UnityEditor;
 using UnityEngine;
@@ -39,6 +40,16 @@ public static class AssetDatabaseExamples
     public static void FindAssetsOfInterfaceType()
     {
         var assets = AssetDatabaseExt.FindAssetsAll(typeof(IAsset));
+        foreach (var asset in assets)
+        {
+            Debug.Log(asset.name);
+        }
+    }
+    
+    [MenuItem("Examples/AssetDatabase/Find Prefabs with text")]
+    public static void FindPrefabsWithText()
+    {
+        var assets = AssetDatabaseExt.FindPrefabs<ComponentA>(AssetDatabaseExt.FindOptions.ConsiderInactiveChildren, "Definition");
         foreach (var asset in assets)
         {
             Debug.Log(asset.name);

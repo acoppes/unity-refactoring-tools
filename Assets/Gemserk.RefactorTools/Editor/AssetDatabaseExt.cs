@@ -75,22 +75,22 @@ namespace Gemserk.RefactorTools.Editor
             return FindAssetsAll(typeof(T), text, folders);
         }
 
-        public static List<GameObject> FindPrefabs<T>(FindOptions options = 0, string[] folders = null)
+        public static List<GameObject> FindPrefabs<T>(FindOptions options = 0, string text = null, string[] folders = null)
         {
-            return FindPrefabs(new []{typeof(T)}, options, folders);
+            return FindPrefabs(new []{typeof(T)}, options, text, folders);
         }
         
-        public static List<GameObject> FindPrefabs<T1, T2>(FindOptions options = 0, string[] folders = null)
+        public static List<GameObject> FindPrefabs<T1, T2>(FindOptions options = 0, string text = null, string[] folders = null)
         {
-            return FindPrefabs(new []{typeof(T1), typeof(T2)} , options, folders);
+            return FindPrefabs(new []{typeof(T1), typeof(T2)} , options, text, folders);
         }
         
-        public static List<GameObject> FindPrefabs<T1, T2, T3>(FindOptions options = 0, string[] folders = null)
+        public static List<GameObject> FindPrefabs<T1, T2, T3>(FindOptions options = 0, string text = null, string[] folders = null)
         {
-            return FindPrefabs(new []{typeof(T1), typeof(T2), typeof(T3)} , options, folders);
+            return FindPrefabs(new []{typeof(T1), typeof(T2), typeof(T3)}, options, text, folders);
         }
 
-        public static List<GameObject> FindPrefabs(IEnumerable<Type> types, FindOptions options, string[] folders)
+        public static List<GameObject> FindPrefabs(IEnumerable<Type> types, FindOptions options, string text, string[] folders)
         {
             try
             {
@@ -99,7 +99,14 @@ namespace Gemserk.RefactorTools.Editor
                 var considerChildren = options.HasFlag(FindOptions.ConsiderChildren) || options.HasFlag(FindOptions.ConsiderInactiveChildren);
                 var considerDisabled = options.HasFlag(FindOptions.ConsiderInactiveChildren);
 
-                var guids = AssetDatabase.FindAssets("t:Prefab", folders);
+                var searchFilter = "t:Prefab";
+                
+                if (!string.IsNullOrEmpty(text))
+                {
+                    searchFilter += $" {text}";
+                }
+                
+                var guids = AssetDatabase.FindAssets(searchFilter, folders);
 
                 var prefabs = guids.Select(g => AssetDatabase.LoadAssetAtPath<GameObject>(
                     AssetDatabase.GUIDToAssetPath(g))).ToList();
