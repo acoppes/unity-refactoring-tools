@@ -1,3 +1,7 @@
+# 0.0.16
+
+* Find Prefabs now allow using some text for filtering when looking for assets with the AssetDatabase, before filtering by type.
+
 # 0.0.15
 
 * New FindAssetsAll that allows any type, even interfaces, when searching for assets in the AssetsDatabase.
