@@ -152,7 +152,7 @@ namespace Gemserk.RefactorTools.Editor
         }
 
 
-        public static void ReplaceScript<T1, T2>(GameObject gameObject, AssetDatabaseExt.FindOptions findOptions = AssetDatabaseExt.FindOptions.None) 
+        public static bool ReplaceScript<T1, T2>(GameObject gameObject, AssetDatabaseExt.FindOptions findOptions = AssetDatabaseExt.FindOptions.None) 
             where T1 : Component 
             where T2: Component
         {
@@ -170,8 +170,14 @@ namespace Gemserk.RefactorTools.Editor
 
             if (monoScripts.Count == 0)
             {
-                Debug.LogError($"No MonoScripts for type {typeof(T2).Name} found.");
-                return;
+                Debug.LogWarning($"No MonoScripts for type {typeof(T2).Name} found.", gameObject);
+                return false;
+            }
+            
+            if (previousTypeList.Length == 0)
+            {
+                Debug.LogWarning($"No MonoScripts for type {typeof(T1).Name} found.", gameObject);
+                return false;
             }
             
             var newClassMonoScript = monoScripts[0];
@@ -183,6 +189,8 @@ namespace Gemserk.RefactorTools.Editor
                 scriptProperty.objectReferenceValue = newClassMonoScript;
                 componentSerializedObject.ApplyModifiedProperties();
             }
+
+            return true;
         }
 
         public static RefactorMonoBehaviourResult RefactorMonoBehaviour<T>(RefactorParameters parameters, 

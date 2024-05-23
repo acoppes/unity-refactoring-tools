@@ -1,3 +1,7 @@
+# 0.0.17
+
+* ReplaceScript returns bool value, true if found scripts to replace and false otherwise.
+
 # 0.0.16
 
 * Find Prefabs now allow using some text for filtering when looking for assets with the AssetDatabase, before filtering by type.
