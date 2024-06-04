@@ -166,11 +166,13 @@ namespace Gemserk.RefactorTools.Editor
                 previousTypeList = gameObject.GetComponentsInChildren<T1>(true);
             }
 
-            var monoScripts = AssetDatabaseExt.FindAssets<MonoScript>(typeof(T2).Name).ToList();
+            var newScriptType = typeof(T2);
+            
+            var monoScripts = AssetDatabaseExt.FindAssets<MonoScript>(newScriptType.Name).ToList();
 
             if (monoScripts.Count == 0)
             {
-                Debug.LogWarning($"No MonoScripts for type {typeof(T2).Name} found.", gameObject);
+                Debug.LogWarning($"No MonoScripts for type {newScriptType.Name} found.", gameObject);
                 return false;
             }
             
@@ -180,7 +182,7 @@ namespace Gemserk.RefactorTools.Editor
                 return false;
             }
             
-            var newClassMonoScript = monoScripts[0];
+            var newClassMonoScript = monoScripts.First(m => m.name.Equals(newScriptType.Name, StringComparison.OrdinalIgnoreCase));
             
             foreach (var component in previousTypeList)
             {
