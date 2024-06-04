@@ -1,3 +1,7 @@
+# 0.0.18
+
+* fix: use exact match for new script when replacing scripts
+
 # 0.0.17
 
 * ReplaceScript returns bool value, true if found scripts to replace and false otherwise.
