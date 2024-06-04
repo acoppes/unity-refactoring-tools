@@ -270,7 +270,10 @@ public static class RefactorExamples
     public static void ReplaceClassExample()
     {
         var gameObject = Selection.activeGameObject;
-        Debug.Log(RefactorTools.ReplaceScript<ComponentA, ComponentD>(gameObject));
+        Debug.Log(RefactorTools.ReplaceScript<ComponentA, ComponentD>(gameObject, 
+            AssetDatabaseExt.FindOptions.ConsiderInactiveChildren));
+        EditorUtility.SetDirty(gameObject);
+        AssetDatabase.SaveAssetIfDirty(gameObject);
     }
     
     [MenuItem("Refactors/Refactor Components implementing interface")]
