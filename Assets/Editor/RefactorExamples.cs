@@ -347,7 +347,7 @@ public static class RefactorExamples
             if (testFailureInFirstRefactor == 0)
             {
                 testFailureInFirstRefactor++;
-                throw new Exception($"Force Failure in scene {data.scenePath}");
+                throw new Exception($"Force Failure in scene {data.sourcePath}");
             }
 
             return new RefactorTools.RefactorResult()

@@ -21,9 +21,17 @@ namespace Gemserk.RefactorTools.Editor
     
         public struct RefactorData
         {
-            public bool isPrefab;
-            public string scenePath;
-            public bool inScene;
+            public enum Source
+            {
+                Prefab, 
+                Scene
+            }
+            
+            public Source source;
+            public string sourcePath;
+
+            public bool isPrefab => source == Source.Prefab;
+            public bool isScene => source == Source.Scene;
         }
 
         public struct RefactorResult
@@ -256,7 +264,8 @@ namespace Gemserk.RefactorTools.Editor
                         {
                             var result = callback(contents, new RefactorData
                             {
-                                isPrefab = true
+                                source = RefactorData.Source.Prefab,
+                                sourcePath = assetPath
                             });
                             
                             if (result.completed)
@@ -372,9 +381,8 @@ namespace Gemserk.RefactorTools.Editor
                             {
                                 var result = callback(gameObject, new RefactorData
                                 {
-                                    isPrefab = false,
-                                    scenePath = scenePath,
-                                    inScene = true
+                                    source = RefactorData.Source.Scene,
+                                    sourcePath = scenePath
                                 });
 
                                 if (result.completed)
