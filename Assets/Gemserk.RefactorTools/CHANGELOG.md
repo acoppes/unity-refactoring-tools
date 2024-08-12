@@ -1,3 +1,8 @@
+# 0.0.19
+
+* Added: new parameter to specify if default debug must be enabled or not (false by default).
+* Fix: continue refactoring prefabs if one refactor fails with exception
+
 # 0.0.18
 
 * fix: use exact match for new script when replacing scripts

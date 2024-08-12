@@ -15,6 +15,7 @@ namespace Gemserk.RefactorTools.Editor
         {
             public List<GameObject> prefabs;
             public List<string> scenes;
+            public bool defaultDebugEnabled;
         }
     
         public struct RefactorData
@@ -229,6 +230,11 @@ namespace Gemserk.RefactorTools.Editor
 
                     EditorUtility.DisplayProgressBar($"Refactoring {total} prefabs with {typeof(T).Name}", "Start", 0);
 
+                    if (parameters.defaultDebugEnabled)
+                    {
+                        Debug.Log($"Refactoring {total} prefabs with {typeof(T).Name}");
+                    }
+
                     for (var i = 0; i < prefabs.Count; i++)
                     {
                         var prefab = prefabs[i];
@@ -236,23 +242,49 @@ namespace Gemserk.RefactorTools.Editor
                             prefab.name,
                             i / (float)total);
 
-                        var contents = PrefabUtility.LoadPrefabContents(AssetDatabase.GetAssetPath(prefab));
+                        var assetPath = AssetDatabase.GetAssetPath(prefab);
 
-                        var result = callback(contents, new RefactorData
+                        if (parameters.defaultDebugEnabled)
                         {
-                            isPrefab = true
-                        });
-
-                        if (result.completed)
-                        {
-                            PrefabUtility.SaveAsPrefabAsset(contents, AssetDatabase.GetAssetPath(prefab), out var success);
-                            if (!success)
-                            {
-                                generalResult.failedPrefabs.Add(prefab);
-                            }
+                            Debug.Log($"Opening {assetPath} for refactor");
                         }
 
+                        var contents = PrefabUtility.LoadPrefabContents(assetPath);
+
+                        try
+                        {
+                            var result = callback(contents, new RefactorData
+                            {
+                                isPrefab = true
+                            });
+                            
+                            if (result.completed)
+                            {
+                                PrefabUtility.SaveAsPrefabAsset(contents, assetPath, out var success);
+                                if (!success)
+                                {
+                                    generalResult.failedPrefabs.Add(prefab);
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            if (parameters.defaultDebugEnabled)
+                            {
+                                Debug.Log($"Failed to refactor prefab {assetPath}");
+                                Debug.LogException(e);
+                            }
+                        }
+                        
                         PrefabUtility.UnloadPrefabContents(contents);
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (parameters.defaultDebugEnabled)
+                    {
+                        Debug.Log($"Failed to refactor prefabs");
+                        Debug.LogException(e);
                     }
                 }
                 finally
@@ -278,6 +310,11 @@ namespace Gemserk.RefactorTools.Editor
                 var scenesCount = scenes.Count;
 
                 EditorUtility.DisplayProgressBar($"Refactoring {scenesCount} scenes", "Starting...", 0);
+
+                if (parameters.defaultDebugEnabled)
+                {
+                    Debug.Log($"Refactoring {scenesCount} scenes");
+                }
 
                 for (var i = 0; i < scenesCount; i++)
                 {
@@ -313,7 +350,7 @@ namespace Gemserk.RefactorTools.Editor
                             {
                                 continue;
                             }
-                            
+
                             var gameObject = component.gameObject;
 
                             var result = callback(gameObject, new RefactorData
@@ -339,6 +376,11 @@ namespace Gemserk.RefactorTools.Editor
 
                         if (modified)
                         {
+                            if (parameters.defaultDebugEnabled)
+                            {
+                                Debug.Log($"Completed refactor for scene: {scenePath}");
+                            }
+
                             EditorSceneManager.MarkSceneDirty(scene);
                             if (!EditorSceneManager.SaveScene(scene))
                             {
@@ -346,6 +388,14 @@ namespace Gemserk.RefactorTools.Editor
                             }
                         }
 
+                    }
+                    catch (Exception e)
+                    {
+                        if (parameters.defaultDebugEnabled)
+                        {
+                            Debug.Log($"Failed to refactor scene: {scenePath}");
+                            Debug.LogException(e);
+                        }
                     }
                     finally
                     {

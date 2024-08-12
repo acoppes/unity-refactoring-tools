@@ -1,7 +1,9 @@
+using System;
 using Gemserk.RefactorTools.Editor;
 using RefactorExamplesData;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public static class RefactorExamples
 {
@@ -282,7 +284,8 @@ public static class RefactorExamples
         RefactorTools.RefactorMonoBehaviour<ICustomComponent>(new RefactorTools.RefactorParameters
         {
             prefabs = AssetDatabaseExt.FindPrefabs<ICustomComponent>(),
-            scenes = AssetDatabaseExt.FindAllScenes()
+            scenes = AssetDatabaseExt.FindAllScenes(),
+            defaultDebugEnabled = true
         }, delegate(GameObject gameObject, 
             RefactorTools.RefactorData data)
         {
@@ -297,6 +300,57 @@ public static class RefactorExamples
             return new RefactorTools.RefactorResult
             {
                 completed = false
+            };
+        });
+    }
+
+    private static int testFailureInFirstRefactor;
+    
+    [MenuItem("Refactors/Fail Refactor Multiple Prefabs")]
+    public static void FailRefactorMultiplePrefabs()
+    {
+        testFailureInFirstRefactor = 0;
+        
+        RefactorTools.RefactorMonoBehaviour<CustomBehaviour>(new RefactorTools.RefactorParameters
+        {
+            prefabs = AssetDatabaseExt.FindPrefabs<CustomBehaviour>(),
+            // scenes = AssetDatabaseExt.FindAllScenes(),
+            defaultDebugEnabled = true
+        }, delegate(GameObject gameObject, 
+            RefactorTools.RefactorData data)
+        {
+            if (testFailureInFirstRefactor == 0)
+            {
+                testFailureInFirstRefactor++;
+                throw new Exception($"Force Failure in prefab {AssetDatabase.GetAssetPath(gameObject)}");
+            }
+
+            return new RefactorTools.RefactorResult();
+        });
+    }
+    
+    [MenuItem("Refactors/Fail Refactoring Multiple Scenes Continue")]
+    public static void FailRefactorMultipleScenes()
+    {
+        testFailureInFirstRefactor = 0;
+        
+        RefactorTools.RefactorMonoBehaviour<ComponentException>(new RefactorTools.RefactorParameters
+        {
+            // prefabs = AssetDatabaseExt.FindPrefabs<CustomBehaviour>(),
+            scenes = AssetDatabaseExt.FindAllScenes(),
+            defaultDebugEnabled = true
+        }, delegate(GameObject gameObject, 
+            RefactorTools.RefactorData data)
+        {
+            if (testFailureInFirstRefactor == 0)
+            {
+                testFailureInFirstRefactor++;
+                throw new Exception($"Force Failure in scene {data.scenePath}");
+            }
+
+            return new RefactorTools.RefactorResult()
+            {
+                completed = true
             };
         });
     }
