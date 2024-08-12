@@ -16,6 +16,7 @@ namespace Gemserk.RefactorTools.Editor
             public List<GameObject> prefabs;
             public List<string> scenes;
             public bool defaultDebugEnabled;
+            public bool interruptOnFailure;
         }
     
         public struct RefactorData
@@ -269,10 +270,18 @@ namespace Gemserk.RefactorTools.Editor
                         }
                         catch (Exception e)
                         {
+                            generalResult.failedPrefabs.Add(prefab);
+                            
                             if (parameters.defaultDebugEnabled)
                             {
                                 Debug.Log($"Failed to refactor prefab {assetPath}");
                                 Debug.LogException(e);
+                            }
+
+                            if (parameters.interruptOnFailure)
+                            {
+                                EditorUtility.ClearProgressBar();
+                                return generalResult;
                             }
                         }
                         
@@ -285,6 +294,11 @@ namespace Gemserk.RefactorTools.Editor
                     {
                         Debug.Log($"Failed to refactor prefabs");
                         Debug.LogException(e);
+                    }
+                    
+                    if (parameters.interruptOnFailure)
+                    {
+                        return generalResult;
                     }
                 }
                 finally
@@ -385,6 +399,12 @@ namespace Gemserk.RefactorTools.Editor
                                     Debug.Log($"Failed to refactor {gameObject.name} in {scenePath}", gameObject);
                                     Debug.LogException(e);
                                 }
+                                
+                                if (parameters.interruptOnFailure)
+                                {
+                                    EditorUtility.ClearProgressBar();
+                                    return generalResult;
+                                }
                             }
                         }
 
@@ -418,6 +438,11 @@ namespace Gemserk.RefactorTools.Editor
                         {
                             Debug.Log($"Failed to refactor scene: {scenePath}");
                             Debug.LogException(e);
+                        }
+                        
+                        if (parameters.interruptOnFailure)
+                        {
+                            return generalResult;
                         }
                     }
                     finally

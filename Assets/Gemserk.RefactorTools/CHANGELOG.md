@@ -1,6 +1,7 @@
 # 0.0.19
 
 * Added: new parameter to specify if default debug must be enabled or not (false by default).
+* Added: new parameter to specify if refactor should stop on any failure or not (false by default).
 * Fix: continue refactoring prefabs if one refactor fails with exception
 * Fix: continue refactoring scene if one object refactor from scene fails.
 

@@ -315,7 +315,8 @@ public static class RefactorExamples
         {
             prefabs = AssetDatabaseExt.FindPrefabs<CustomBehaviour>(),
             // scenes = AssetDatabaseExt.FindAllScenes(),
-            defaultDebugEnabled = true
+            defaultDebugEnabled = true,
+            interruptOnFailure = true
         }, delegate(GameObject gameObject, 
             RefactorTools.RefactorData data)
         {
@@ -338,7 +339,8 @@ public static class RefactorExamples
         {
             // prefabs = AssetDatabaseExt.FindPrefabs<CustomBehaviour>(),
             scenes = AssetDatabaseExt.FindAllScenes(),
-            defaultDebugEnabled = true
+            defaultDebugEnabled = true,
+            interruptOnFailure = true
         }, delegate(GameObject gameObject, 
             RefactorTools.RefactorData data)
         {
