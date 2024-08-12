@@ -319,6 +319,7 @@ namespace Gemserk.RefactorTools.Editor
                 for (var i = 0; i < scenesCount; i++)
                 {
                     var scenePath = scenes[i];
+                    var sceneErrors = 0;
 
                     try
                     {
@@ -353,23 +354,36 @@ namespace Gemserk.RefactorTools.Editor
 
                             var gameObject = component.gameObject;
 
-                            var result = callback(gameObject, new RefactorData
+                            try
                             {
-                                isPrefab = false,
-                                scenePath = scenePath,
-                                inScene = true
-                            });
+                                var result = callback(gameObject, new RefactorData
+                                {
+                                    isPrefab = false,
+                                    scenePath = scenePath,
+                                    inScene = true
+                                });
 
-                            if (result.completed)
-                            {
-                                modified = true;
-                                if (component != null)
+                                if (result.completed)
                                 {
-                                    EditorUtility.SetDirty(component);
+                                    modified = true;
+                                    if (component != null)
+                                    {
+                                        EditorUtility.SetDirty(component);
+                                    }
+                                    else if (gameObject != null)
+                                    {
+                                        EditorUtility.SetDirty(gameObject);
+                                    }
                                 }
-                                else if (gameObject != null)
+                            }
+                            catch (Exception e)
+                            {
+                                sceneErrors++;
+                                
+                                if (parameters.defaultDebugEnabled)
                                 {
-                                    EditorUtility.SetDirty(gameObject);
+                                    Debug.Log($"Failed to refactor {gameObject.name} in {scenePath}", gameObject);
+                                    Debug.LogException(e);
                                 }
                             }
                         }
@@ -378,7 +392,14 @@ namespace Gemserk.RefactorTools.Editor
                         {
                             if (parameters.defaultDebugEnabled)
                             {
-                                Debug.Log($"Completed refactor for scene: {scenePath}");
+                                if (sceneErrors > 0)
+                                {
+                                    Debug.Log($"Completed refactor for scene: {scenePath} with {sceneErrors} failed refactors.");
+                                }
+                                else
+                                {
+                                    Debug.Log($"Completed refactor for scene: {scenePath}");
+                                }
                             }
 
                             EditorSceneManager.MarkSceneDirty(scene);
@@ -391,6 +412,8 @@ namespace Gemserk.RefactorTools.Editor
                     }
                     catch (Exception e)
                     {
+                        generalResult.failedScenes.Add(scenePath);
+                        
                         if (parameters.defaultDebugEnabled)
                         {
                             Debug.Log($"Failed to refactor scene: {scenePath}");

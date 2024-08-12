@@ -2,6 +2,7 @@
 
 * Added: new parameter to specify if default debug must be enabled or not (false by default).
 * Fix: continue refactoring prefabs if one refactor fails with exception
+* Fix: continue refactoring scene if one object refactor from scene fails.
 
 # 0.0.18
 
