@@ -1,3 +1,7 @@
+# 0.1.0
+
+* Changed: Refactor data now specifies with enum its source type and the path is for the prefab or for the scene.
+
 # 0.0.19
 
 * Added: new parameter to specify if default debug must be enabled or not (false by default).
