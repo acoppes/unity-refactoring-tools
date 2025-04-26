@@ -364,7 +364,7 @@ public static class RefactorExamples
         var scenes = 
             Selection.objects.OfType<SceneAsset>().Select(AssetDatabase.GetAssetPath).ToList();
         
-        RefactorTools.RefactorMonoBehaviour<ComponentG>(new RefactorTools.RefactorParameters
+        RefactorTools.RefactorMonoBehaviour<ComponentA>(new RefactorTools.RefactorParameters
         {
             scenes = scenes,
             defaultDebugEnabled = true,
@@ -381,6 +381,8 @@ public static class RefactorExamples
                 {
                     var componentA = componentG.anotherReference.GetComponent<ComponentA>();
                     componentA.someValue = 99;
+                    EditorUtility.SetDirty(componentA);
+                    EditorUtility.SetDirty(componentG.anotherReference);
                     completed = true;
                 }
             }
