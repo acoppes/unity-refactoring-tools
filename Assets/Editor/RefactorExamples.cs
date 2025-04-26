@@ -364,7 +364,7 @@ public static class RefactorExamples
         var scenes = 
             Selection.objects.OfType<SceneAsset>().Select(AssetDatabase.GetAssetPath).ToList();
         
-        RefactorTools.RefactorMonoBehaviour<ComponentB>(new RefactorTools.RefactorParameters
+        RefactorTools.RefactorMonoBehaviour<ComponentG>(new RefactorTools.RefactorParameters
         {
             scenes = scenes,
             defaultDebugEnabled = true,
@@ -373,12 +373,16 @@ public static class RefactorExamples
         {
             var completed = false;
             
-            var allComponentA = gameObject.GetComponentsInChildren<ComponentA>();
+            var allComponentsG = gameObject.GetComponentsInChildren<ComponentG>();
 
-            foreach (var componentA in allComponentA)
+            foreach (var componentG in allComponentsG)
             {
-                componentA.someValue = 99;
-                completed = true;
+                if (componentG.anotherReference)
+                {
+                    var componentA = componentG.anotherReference.GetComponent<ComponentA>();
+                    componentA.someValue = 99;
+                    completed = true;
+                }
             }
             
             return new RefactorTools.RefactorResult()
