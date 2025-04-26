@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Gemserk.RefactorTools.Editor;
 using RefactorExamplesData;
 using UnityEditor;
@@ -353,6 +355,35 @@ public static class RefactorExamples
             return new RefactorTools.RefactorResult()
             {
                 completed = true
+            };
+        });
+    }
+    [MenuItem("Refactors/Bug Refactor Component Mark Modified")]
+    public static void RefactorComponentInSelectedSceneModifiedTest()
+    {
+        var scenes = 
+            Selection.objects.OfType<SceneAsset>().Select(AssetDatabase.GetAssetPath).ToList();
+        
+        RefactorTools.RefactorMonoBehaviour<ComponentA>(new RefactorTools.RefactorParameters
+        {
+            scenes = scenes,
+            defaultDebugEnabled = true,
+            interruptOnFailure = true
+        }, delegate(GameObject gameObject, RefactorTools.RefactorData data)
+        {
+            var completed = false;
+            
+            var allComponentA = gameObject.GetComponentsInChildren<ComponentA>();
+
+            foreach (var componentA in allComponentA)
+            {
+                componentA.someValue = 99;
+                completed = true;
+            }
+            
+            return new RefactorTools.RefactorResult()
+            {
+                completed = completed
             };
         });
     }
