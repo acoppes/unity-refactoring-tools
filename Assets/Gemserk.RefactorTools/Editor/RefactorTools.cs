@@ -370,7 +370,7 @@ namespace Gemserk.RefactorTools.Editor
                             var component = t as Component;
 
                             // Shouldn't be null since we can only get Components from gameobject.
-                            if (component == null)
+                            if (!component)
                             {
                                 continue;
                             }
@@ -388,11 +388,11 @@ namespace Gemserk.RefactorTools.Editor
                                 if (result.completed)
                                 {
                                     modified = true;
-                                    if (component != null)
+                                    if (component)
                                     {
                                         EditorUtility.SetDirty(component);
                                     }
-                                    else if (gameObject != null)
+                                    else if (gameObject)
                                     {
                                         EditorUtility.SetDirty(gameObject);
                                     }
