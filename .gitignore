@@ -61,4 +61,5 @@ profiler/
 Recordings/
 
 UserSettings/
-/TempAssets/
+**/TempAssets/
+**/Logs/

@@ -1,11 +1,10 @@
 {
   "dependencies": {
-    "com.gemserk.upmgitpusher": {
-      "version": "0.0.21",
+    "com.gemserk.refactortools": {
+      "version": "file:../../packages/com.gemserk.refactortools",
       "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
+      "source": "local",
+      "dependencies": {}
     },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
