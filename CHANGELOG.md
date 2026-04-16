@@ -1,3 +1,7 @@
+# 0.1.1
+
+* Changed: just restructured the project.
+
 # 0.1.0
 
 * Changed: Refactor data now specifies with enum its source type and the path is for the prefab or for the scene.
